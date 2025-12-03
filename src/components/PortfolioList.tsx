@@ -32,7 +32,7 @@ interface Article {
   title: string;
   link: string;
   pubDate: string;
-  likedCount?: number; // オプショナルに変更
+  likedCount?: number;
 }
 
 interface PortfolioListProps {
@@ -106,10 +106,11 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         {/* ヘッダー */}
         <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-4 border-b-2 border-black dark:border-slate-700 flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
+            {/* アイコンを丸くする (rounded-fullを追加) */}
             <img
               src={profile.avatarUrl}
               alt="avatar"
-              className="w-10 h-10 border border-slate-300 dark:border-slate-600 object-cover"
+              className="w-10 h-10 rounded-full border border-slate-300 dark:border-slate-600 object-cover"
             />
             <div>
               <h1 className="text-2xl font-black tracking-tight dark:text-white">
@@ -121,9 +122,10 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </div>
           </div>
 
+          {/* ダークモードボタンを丸くする (rounded-fullを追加) */}
           <button
             onClick={toggleTheme}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 border border-black dark:border-slate-500 transition-colors dark:text-white"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 border border-black dark:border-slate-500 transition-colors dark:text-white"
             aria-label="Toggle Dark Mode"
           >
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
@@ -267,7 +269,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                         </h3>
                         <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
                           <span>{article.pubDate}</span>
-                          {/* likedCountがある場合のみ表示 */}
                           {article.likedCount !== undefined && (
                             <span className="flex items-center text-pink-500 font-bold">
                               <Heart size={12} className="mr-1 fill-pink-500" />

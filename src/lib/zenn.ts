@@ -19,7 +19,7 @@ export async function getZennArticles(): Promise<Article[]> {
   }
 
   // 最新5件を取得して整形
-  return feed.items.slice(0, 5).map((item) => {
+  return feed.items.slice(0, 3).map((item) => {
     return {
       title: item.title || "",
       link: item.link || "",
