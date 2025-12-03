@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ArrowLeft } from 'lucide-react';
+---
+
+<Layout title="404 Not Found">
+  <div class="flex flex-col items-center justify-center min-h-screen text-center px-4">
+    <h1 class="text-9xl font-black text-black dark:text-white mb-4">404</h1>
+    <p class="text-xl text-gray-600 dark:text-gray-400 mb-8 font-bold">
+      Page Not Found
+    </p>
+    <a 
+      href="/" 
+      class="flex items-center space-x-2 px-6 py-3 bg-black dark:bg-white text-white dark:text-black font-bold hover:opacity-80 transition-opacity"
+    >
+      <ArrowLeft size={20} />
+      <span>Back to Top</span>
+    </a>
+  </div>
+</Layout>

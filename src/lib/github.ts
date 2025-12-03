@@ -4,7 +4,7 @@ export interface Repository {
   name: string;
   description: string;
   url: string;
-  homepageUrl: string | null; // 追加
+  homepageUrl: string | null; // これが必要
   stargazerCount: number;
   primaryLanguage: {
     name: string;
@@ -12,7 +12,6 @@ export interface Repository {
   } | null;
 }
 
-// 戻り値を変更: リポジトリリストとアバターURLを含むオブジェクト
 export interface GithubData {
   repos: Repository[];
   avatarUrl: string;
@@ -25,6 +24,7 @@ export async function getGithubData(): Promise<GithubData> {
     throw new Error("GITHUB_TOKEN is not defined in .env");
   }
 
+  // GraphQLクエリ: homepageUrlを追加
   const query = `
     {
       viewer {
