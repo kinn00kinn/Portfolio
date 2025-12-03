@@ -9,8 +9,12 @@ interface Props {
     image?: string;
 }
 
-// OG画像のデフォルトパスを後ほど作成する自動生成URLに設定
 const { title, description = "Kinn00kinn's Portfolio", image = "/og-image.png" } = Astro.props;
+
+// サイトのベースURLを取得 (astro.config.mjsのsite設定、なければローカルホスト)
+const site = Astro.site ? Astro.site.href : 'http://localhost:4321';
+// 画像の完全なURLを生成
+const ogImageUrl = new URL(image, site).href;
 ---
 
 <!doctype html>
@@ -23,10 +27,17 @@ const { title, description = "Kinn00kinn's Portfolio", image = "/og-image.png" }
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={Astro.url} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:image" content={new URL(image, Astro.url)} />
+        <meta property="og:image" content={ogImageUrl} />
+
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={Astro.url} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImageUrl} />
 
         <ViewTransitions />
 	</head>
