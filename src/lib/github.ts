@@ -1,10 +1,10 @@
 // src/lib/github.ts
 
-// 取得するデータの型定義
 export interface Repository {
   name: string;
   description: string;
   url: string;
+  homepageUrl: string | null; // 追加
   stargazerCount: number;
   primaryLanguage: {
     name: string;
@@ -12,23 +12,30 @@ export interface Repository {
   } | null;
 }
 
-export async function getGithubRepos(): Promise<Repository[]> {
+// 戻り値を変更: リポジトリリストとアバターURLを含むオブジェクト
+export interface GithubData {
+  repos: Repository[];
+  avatarUrl: string;
+}
+
+export async function getGithubData(): Promise<GithubData> {
   const token = import.meta.env.GITHUB_TOKEN;
 
   if (!token) {
     throw new Error("GITHUB_TOKEN is not defined in .env");
   }
 
-  // GraphQLクエリ: ピン留めされたリポジトリを取得
   const query = `
     {
       viewer {
+        avatarUrl
         pinnedItems(first: 6, types: REPOSITORY) {
           nodes {
             ... on Repository {
               name
               description
               url
+              homepageUrl
               stargazerCount
               primaryLanguage {
                 name
@@ -52,11 +59,13 @@ export async function getGithubRepos(): Promise<Repository[]> {
 
   const json = await response.json();
 
-  // エラーハンドリング
   if (json.errors) {
     console.error("GitHub API Error:", json.errors);
-    return [];
+    return { repos: [], avatarUrl: "" };
   }
 
-  return json.data.viewer.pinnedItems.nodes;
+  return {
+    repos: json.data.viewer.pinnedItems.nodes,
+    avatarUrl: json.data.viewer.avatarUrl,
+  };
 }
