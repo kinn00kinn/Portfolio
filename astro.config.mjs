@@ -1,9 +1,9 @@
-// tailwind.config.mjs
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+// astro.config.mjs
+import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
+
+// https://astro.build/config
+export default defineConfig({
+  integrations: [react(), tailwind()],
+});
