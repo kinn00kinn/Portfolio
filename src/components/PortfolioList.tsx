@@ -1,5 +1,5 @@
 // src/components/PortfolioList.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   User,
   History,
@@ -7,18 +7,18 @@ import {
   FolderCode,
   FileText,
   ExternalLink,
-  ArrowRight,
   Mail,
   Sun,
   Moon,
   Globe,
   Heart,
   Twitter,
-  Linkedin, // LinkedInアイコンを追加
-  BookOpen, // Zenn/Qiitaの代用アイコン
+  Linkedin,
+  BookOpen,
+  MapPin,
 } from "lucide-react";
 
-// 型定義
+// --- 型定義 (変更なし) ---
 interface Repository {
   name: string;
   description: string;
@@ -47,9 +47,9 @@ interface PortfolioListProps {
     email: string;
     avatarUrl: string;
     xUrl?: string;
-    linkedinUrl?: string; // 追加
-    zennUrl?: string; // 追加
-    qiitaUrl?: string; // 追加
+    linkedinUrl?: string;
+    zennUrl?: string;
+    qiitaUrl?: string;
   };
   repos: Repository[];
   articles: Article[];
@@ -61,8 +61,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
   articles,
 }) => {
   const [isDark, setIsDark] = useState(false);
-  const [isFollowOpen, setIsFollowOpen] = useState(false);
-  const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (
@@ -90,292 +88,195 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(event.target as Node)
-      ) {
-        setIsFollowOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // SNSリンクの定義
-  const socialLinks = [
-    {
-      href: profile.githubUrl,
-      text: "GitHub",
-      icon: <Github size={20} />,
-    },
-    // X (Twitter)
-    profile.xUrl
-      ? {
-          href: profile.xUrl,
-          text: "X (Twitter)",
-          icon: <Twitter size={20} />,
-        }
-      : null,
-    // LinkedIn
-    profile.linkedinUrl
-      ? {
-          href: profile.linkedinUrl,
-          text: "LinkedIn",
-          icon: <Linkedin size={20} />,
-        }
-      : null,
-    // Zenn (アイコンはFileTextで代用)
-    profile.zennUrl
-      ? {
-          href: profile.zennUrl,
-          text: "Zenn",
-          icon: <FileText size={20} />,
-        }
-      : null,
-    // Qiita (アイコンはBookOpenで代用)
-    profile.qiitaUrl
-      ? {
-          href: profile.qiitaUrl,
-          text: "Qiita",
-          icon: <BookOpen size={20} />,
-        }
-      : null,
-    {
-      href: `mailto:${profile.email}`,
-      text: "Email",
-      icon: <Mail size={20} />,
-    },
-  ].filter(Boolean);
+  // 共通のカードスタイル（ハードシャドウ + ボーダー）
+  const cardClass =
+    "bg-white dark:bg-slate-900 border-2 border-black dark:border-slate-700 " +
+    "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] " +
+    "rounded-xl overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)]";
 
   return (
-    <div className="flex justify-center min-h-screen font-sans transition-colors duration-300">
-      <div className="w-full max-w-xl my-10 mx-4 sm:mx-0">
-        {/* ヘッダー */}
-        <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-4 border-b-2 border-black dark:border-slate-700 flex items-center justify-between mb-8 relative">
-          <div className="flex items-center space-x-3">
-            <img
-              src={profile.avatarUrl}
-              alt="avatar"
-              className="w-10 h-10 rounded-full border border-slate-300 dark:border-slate-600 object-cover"
-            />
-            <div>
-              <h1 className="text-2xl font-black tracking-tight dark:text-white">
-                {profile.name}
-              </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Portfolio
-              </p>
+    <div className="min-h-screen bg-[#f0f0f0] dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300 p-4 md:p-8">
+      {/* --- Bento Grid Layout Container --- */}
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* 1. Profile Hero Card (Large, spans 2 columns) */}
+        <div
+          className={`${cardClass} md:col-span-2 lg:col-span-2 row-span-2 p-6 md:p-8 flex flex-col justify-between relative group`}
+        >
+          <div>
+            <div className="flex justify-between items-start mb-4">
+              <img
+                src={profile.avatarUrl}
+                alt="avatar"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-black dark:border-white object-cover"
+              />
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full border-2 border-black dark:border-slate-400 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+              >
+                {isDark ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
             </div>
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-2">
+              {profile.name}
+            </h1>
+            <p className="text-sm md:text-base font-bold text-gray-600 dark:text-gray-400 flex items-center gap-2 mb-4">
+              <User size={18} />
+              {profile.role}
+            </p>
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              {profile.bio}
+            </p>
           </div>
 
-          <div className="flex items-center space-x-3" ref={popoverRef}>
-            <button
-              onClick={() => setIsFollowOpen(!isFollowOpen)}
-              className="px-3 py-1.5 text-sm font-bold border-2 border-black dark:border-slate-500 hover:bg-black hover:text-white dark:hover:bg-slate-700 transition-colors dark:text-white bg-white dark:bg-slate-900"
-            >
-              Follow
-            </button>
-
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 border-2 border-black dark:border-slate-500 transition-colors dark:text-white"
-              aria-label="Toggle Dark Mode"
-            >
-              {isDark ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-
-            {/* SNSポップオーバー */}
-            {isFollowOpen && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-900 border-2 border-black dark:border-slate-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] z-20">
-                <ul className="py-1">
-                  {socialLinks.map((link: any) => (
-                    <li key={link.text}>
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-3 px-4 py-3 text-sm font-bold text-black dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
-                        onClick={() => setIsFollowOpen(false)}
-                      >
-                        {link.icon}
-                        <span>{link.text}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          <div className="mt-6 pt-6 border-t-2 border-dashed border-gray-300 dark:border-slate-700">
+            <div className="flex flex-wrap gap-2">
+              <span className="px-3 py-1 bg-gray-100 dark:bg-slate-800 text-xs font-bold rounded-full">
+                🚀 Exploring
+              </span>
+              <span className="px-3 py-1 bg-gray-100 dark:bg-slate-800 text-xs font-bold rounded-full">
+                💻 Web Dev
+              </span>
+              <span className="px-3 py-1 bg-gray-100 dark:bg-slate-800 text-xs font-bold rounded-full">
+                Infrastructure
+              </span>
+            </div>
           </div>
-        </header>
+        </div>
 
-        <main className="space-y-12">
-          {/* Main Links */}
-          <section>
-            <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 ml-1">
-              Main
-            </h2>
-            <div className="border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-              <div className="p-4 border-b border-gray-200 dark:border-slate-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                <div className="flex items-center space-x-4">
-                  <div className="text-black dark:text-slate-200">
-                    <User size={24} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-black dark:text-white">
-                      About Me
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {profile.role}
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
-                  {profile.bio}
-                </p>
+        {/* 2. Social Links Grid (Small cards) */}
+        <div className="md:col-span-1 lg:col-span-2 grid grid-cols-2 gap-4">
+          <a
+            href={profile.githubUrl}
+            target="_blank"
+            rel="noreferrer"
+            className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
+          >
+            <Github size={32} />
+            <span className="font-bold">GitHub</span>
+          </a>
+          {profile.xUrl && (
+            <a
+              href={profile.xUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
+            >
+              <Twitter size={32} />
+              <span className="font-bold">X / Twitter</span>
+            </a>
+          )}
+          {profile.zennUrl && (
+            <a
+              href={profile.zennUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 text-[#3EA8FF] hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
+            >
+              <FileText size={32} />
+              <span className="font-bold">Zenn</span>
+            </a>
+          )}
+          <a
+            href={`mailto:${profile.email}`}
+            className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
+          >
+            <Mail size={32} />
+            <span className="font-bold">Email</span>
+          </a>
+        </div>
+
+        {/* 3. Projects Header */}
+        <div className="col-span-1 md:col-span-3 lg:col-span-4 mt-8 mb-2 flex items-center gap-2">
+          <FolderCode className="text-black dark:text-white" />
+          <h2 className="text-2xl font-black uppercase tracking-wider">
+            Pinned Projects
+          </h2>
+        </div>
+
+        {/* 4. Project Cards */}
+        {repos.map((repo) => (
+          <a
+            key={repo.url}
+            href={repo.url}
+            target="_blank"
+            rel="noreferrer"
+            className={`${cardClass} col-span-1 p-5 flex flex-col h-full hover:bg-yellow-50 dark:hover:bg-slate-800/50`}
+          >
+            <div className="flex justify-between items-start mb-3">
+              <div className="p-2 bg-black dark:bg-white text-white dark:text-black rounded-lg">
+                <Github size={20} />
               </div>
-              <div className="p-4 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors flex items-center space-x-4">
-                <div className="text-black dark:text-slate-200">
-                  <History size={24} />
+              <ExternalLink size={18} className="text-gray-400" />
+            </div>
+
+            <h3 className="text-lg font-bold mb-2 line-clamp-1">{repo.name}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3 flex-grow">
+              {repo.description || "No description provided."}
+            </p>
+
+            <div className="flex items-center justify-between text-xs font-bold text-gray-500 dark:text-gray-400 mt-auto">
+              {repo.primaryLanguage ? (
+                <div className="flex items-center gap-1">
+                  <span
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: repo.primaryLanguage.color }}
+                  ></span>
+                  {repo.primaryLanguage.name}
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-black dark:text-white">
-                    History
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    経歴・職歴
-                  </p>
-                </div>
+              ) : (
+                <span></span>
+              )}
+              <div className="flex items-center gap-1">
+                <span>★</span> {repo.stargazerCount}
               </div>
             </div>
-          </section>
+          </a>
+        ))}
 
-          {/* Projects */}
-          <section>
-            <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 ml-1">
-              Projects
+        {/* 5. Articles Section (List Style but inside Grid) */}
+        <div
+          className={`${cardClass} col-span-1 md:col-span-3 lg:col-span-4 p-6`}
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <BookOpen className="text-black dark:text-white" />
+            <h2 className="text-2xl font-black uppercase tracking-wider">
+              Latest Articles
             </h2>
-            <div className="border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-              {repos.map((repo) => (
-                <div
-                  key={repo.url}
-                  className="p-4 border-b border-gray-200 dark:border-slate-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <FolderCode
-                        size={20}
-                        className="text-black dark:text-slate-200"
-                      />
-                      <h3 className="text-lg font-bold text-black dark:text-white">
-                        {repo.name}
-                      </h3>
-                    </div>
-                    {repo.primaryLanguage && (
-                      <span className="text-xs px-2 py-1 border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-300 flex items-center gap-1">
-                        <span
-                          className="w-2 h-2"
-                          style={{
-                            backgroundColor: repo.primaryLanguage.color,
-                          }}
-                        ></span>
-                        {repo.primaryLanguage.name}
-                      </span>
-                    )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {articles.map((article) => (
+              <a
+                key={article.link}
+                href={article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col p-4 rounded-lg border-2 border-transparent hover:border-black dark:hover:border-slate-500 bg-gray-50 dark:bg-slate-800/50 transition-colors"
+              >
+                <h3 className="font-bold text-base md:text-lg mb-2">
+                  {article.title}
+                </h3>
+                <div className="flex items-center justify-between mt-auto text-xs font-bold text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <FileText size={14} />
+                    <span>{article.pubDate}</span>
                   </div>
-
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-                    {repo.description || "No description"}
-                  </p>
-
-                  <div className="flex flex-wrap gap-3 mt-2">
-                    <a
-                      href={repo.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center space-x-2 px-3 py-1.5 bg-gray-900 dark:bg-slate-700 text-white text-sm hover:opacity-80 transition-opacity"
-                    >
-                      <Github size={16} />
-                      <span>GitHub</span>
-                    </a>
-                    {repo.homepageUrl && (
-                      <a
-                        href={repo.homepageUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center space-x-2 px-3 py-1.5 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
-                      >
-                        <Globe size={16} />
-                        <span>Website</span>
-                      </a>
-                    )}
-                  </div>
+                  {article.likedCount !== undefined && (
+                    <span className="flex items-center text-pink-500">
+                      <Heart size={12} className="mr-1 fill-pink-500" />
+                      {article.likedCount}
+                    </span>
+                  )}
                 </div>
-              ))}
-              {repos.length === 0 && (
-                <div className="p-4 text-gray-500 text-sm">
-                  No projects found.
-                </div>
-              )}
-            </div>
-          </section>
+              </a>
+            ))}
+          </div>
+        </div>
 
-          {/* Articles */}
-          <section>
-            <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 ml-1">
-              Articles (Latest)
-            </h2>
-            <div className="border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-              {articles.map((article) => (
-                <a
-                  key={article.link}
-                  href={article.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-4 border-b border-gray-200 dark:border-slate-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <FileText
-                        size={20}
-                        className="text-blue-500 mt-1 flex-shrink-0"
-                      />
-                      <div>
-                        <h3 className="text-base font-bold text-black dark:text-white group-hover:underline decoration-black dark:decoration-white decoration-2 underline-offset-2">
-                          {article.title}
-                        </h3>
-                        <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          <span>{article.pubDate}</span>
-                          {article.likedCount !== undefined && (
-                            <span className="flex items-center text-pink-500 font-bold">
-                              <Heart size={12} className="mr-1 fill-pink-500" />
-                              {article.likedCount}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <ExternalLink
-                      size={16}
-                      className="text-gray-400 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                  </div>
-                </a>
-              ))}
-              {articles.length === 0 && (
-                <div className="p-4 text-gray-500 text-sm">
-                  No articles found.
-                </div>
-              )}
-            </div>
-          </section>
-        </main>
-
-        <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400 pb-8">
-          &copy; {new Date().getFullYear()} {profile.name}
+        {/* Footer */}
+        <footer className="col-span-1 md:col-span-3 lg:col-span-4 py-8 text-center text-sm font-bold text-gray-400">
+          © {new Date().getFullYear()} {profile.name}. Built with Astro &
+          Tailwind.
         </footer>
       </div>
     </div>
