@@ -13,7 +13,9 @@ import {
   Moon,
   Globe,
   Heart,
-  Twitter, // Xアイコン用
+  Twitter,
+  Linkedin, // LinkedInアイコンを追加
+  BookOpen, // Zenn/Qiitaの代用アイコン
 } from "lucide-react";
 
 // 型定義
@@ -44,7 +46,10 @@ interface PortfolioListProps {
     githubUrl: string;
     email: string;
     avatarUrl: string;
-    xUrl?: string; // XのURLを追加
+    xUrl?: string;
+    linkedinUrl?: string; // 追加
+    zennUrl?: string; // 追加
+    qiitaUrl?: string; // 追加
   };
   repos: Repository[];
   articles: Article[];
@@ -56,11 +61,9 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
   articles,
 }) => {
   const [isDark, setIsDark] = useState(false);
-  // Followポップオーバーの状態管理
   const [isFollowOpen, setIsFollowOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  // ダークモードの初期化と切り替え (変更なし)
   useEffect(() => {
     if (
       localStorage.theme === "dark" ||
@@ -87,7 +90,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     }
   };
 
-  // ポップオーバー外をクリックしたら閉じる処理
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -110,7 +112,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
       text: "GitHub",
       icon: <Github size={20} />,
     },
-    // xUrlがある場合のみ表示
+    // X (Twitter)
     profile.xUrl
       ? {
           href: profile.xUrl,
@@ -118,12 +120,36 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           icon: <Twitter size={20} />,
         }
       : null,
+    // LinkedIn
+    profile.linkedinUrl
+      ? {
+          href: profile.linkedinUrl,
+          text: "LinkedIn",
+          icon: <Linkedin size={20} />,
+        }
+      : null,
+    // Zenn (アイコンはFileTextで代用)
+    profile.zennUrl
+      ? {
+          href: profile.zennUrl,
+          text: "Zenn",
+          icon: <FileText size={20} />,
+        }
+      : null,
+    // Qiita (アイコンはBookOpenで代用)
+    profile.qiitaUrl
+      ? {
+          href: profile.qiitaUrl,
+          text: "Qiita",
+          icon: <BookOpen size={20} />,
+        }
+      : null,
     {
       href: `mailto:${profile.email}`,
       text: "Email",
       icon: <Mail size={20} />,
     },
-  ].filter(Boolean); // nullを除外
+  ].filter(Boolean);
 
   return (
     <div className="flex justify-center min-h-screen font-sans transition-colors duration-300">
@@ -131,7 +157,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         {/* ヘッダー */}
         <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-4 border-b-2 border-black dark:border-slate-700 flex items-center justify-between mb-8 relative">
           <div className="flex items-center space-x-3">
-            {/* アイコンは丸く */}
             <img
               src={profile.avatarUrl}
               alt="avatar"
@@ -148,7 +173,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           </div>
 
           <div className="flex items-center space-x-3" ref={popoverRef}>
-            {/* Followボタン (角丸なし) */}
             <button
               onClick={() => setIsFollowOpen(!isFollowOpen)}
               className="px-3 py-1.5 text-sm font-bold border-2 border-black dark:border-slate-500 hover:bg-black hover:text-white dark:hover:bg-slate-700 transition-colors dark:text-white bg-white dark:bg-slate-900"
@@ -156,7 +180,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               Follow
             </button>
 
-            {/* ダークモードボタン (丸く) */}
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 border border-black dark:border-slate-500 transition-colors dark:text-white"
@@ -165,7 +188,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
-            {/* SNSポップオーバー (角丸なし) */}
+            {/* SNSポップオーバー */}
             {isFollowOpen && (
               <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-900 border-2 border-black dark:border-slate-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] z-20">
                 <ul className="py-1">
@@ -278,7 +301,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                       <Github size={16} />
                       <span>GitHub</span>
                     </a>
-                    {/* 追加: WebサイトURLがある場合のみ表示 */}
                     {repo.homepageUrl && (
                       <a
                         href={repo.homepageUrl}
@@ -301,7 +323,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </div>
           </section>
 
-          {/* Articles (RSS - Latest) */}
+          {/* Articles */}
           <section>
             <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 ml-1">
               Articles (Latest)
@@ -327,7 +349,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                         </h3>
                         <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
                           <span>{article.pubDate}</span>
-                          {/* likedCountがある場合のみ表示 (RSSでは非表示) */}
                           {article.likedCount !== undefined && (
                             <span className="flex items-center text-pink-500 font-bold">
                               <Heart size={12} className="mr-1 fill-pink-500" />
