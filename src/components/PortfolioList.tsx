@@ -182,7 +182,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 border border-black dark:border-slate-500 transition-colors dark:text-white"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 border-2 border-black dark:border-slate-500 transition-colors dark:text-white"
               aria-label="Toggle Dark Mode"
             >
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
