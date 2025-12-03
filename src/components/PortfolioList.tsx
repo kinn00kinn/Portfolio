@@ -373,9 +373,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         <footer className="col-span-1 md:col-span-3 lg:col-span-4 py-12 text-center">
           <p className="text-sm font-bold text-zinc-400 dark:text-zinc-600">
             © {new Date().getFullYear()} {profile.name}.
-            <br className="md:hidden" />
-            Built with <span className="text-orange-500">Astro</span> &{" "}
-            <span className="text-sky-500">Tailwind</span>.
           </p>
         </footer>
       </div>
