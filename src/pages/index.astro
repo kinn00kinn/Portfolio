@@ -1,9 +1,9 @@
 ---
 // src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
 import { getGithubData } from '../lib/github';
 import { getZennArticles } from '../lib/zenn';
 import PortfolioList from '../components/PortfolioList';
-import '../styles/global.css';
 
 // データを取得
 const { repos } = await getGithubData();
@@ -14,33 +14,17 @@ const profile = {
   role: "KOSEN Advanced Course Student",
   bio: "情報専攻の高専専攻科生。Web開発とインフラに興味があります。",
   githubUrl: "https://github.com/kinn00kinn",
-  email: "example@example.com", // メールアドレスを設定
-  avatarUrl: "/kinnkinn.png", // GitHubから取得したアイコン
+  xUrl: "https://twitter.com/", // あなたのXのプロフィールURLを設定してください
+  email: "example@example.com", 
+  avatarUrl: "/kinnkinn.png", 
 };
 ---
 
-<html lang="ja">
-	<head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JB2MX4YNF5"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-JB2MX4YNF5');
-    </script>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{profile.name} - Portfolio</title>
-	</head>
-	<body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 transition-colors duration-300">
-		<PortfolioList 
-            profile={profile} 
-            repos={repos} 
-            articles={articles} 
-            client:load 
-        />
-	</body>
-</html>
+<Layout title={`${profile.name} - Portfolio`}>
+	<PortfolioList 
+        profile={profile} 
+        repos={repos} 
+        articles={articles} 
+        client:load 
+    />
+</Layout>

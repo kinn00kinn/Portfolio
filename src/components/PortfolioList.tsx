@@ -1,5 +1,5 @@
 // src/components/PortfolioList.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   User,
   History,
@@ -13,6 +13,7 @@ import {
   Moon,
   Globe,
   Heart,
+  Twitter, // Xアイコン用
 } from "lucide-react";
 
 // 型定義
@@ -43,6 +44,7 @@ interface PortfolioListProps {
     githubUrl: string;
     email: string;
     avatarUrl: string;
+    xUrl?: string; // XのURLを追加
   };
   repos: Repository[];
   articles: Article[];
@@ -54,8 +56,11 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
   articles,
 }) => {
   const [isDark, setIsDark] = useState(false);
+  // Followポップオーバーの状態管理
+  const [isFollowOpen, setIsFollowOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
-  // ダークモードの初期化と切り替え
+  // ダークモードの初期化と切り替え (変更なし)
   useEffect(() => {
     if (
       localStorage.theme === "dark" ||
@@ -82,31 +87,51 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     }
   };
 
-  // リンク集の定義
-  const links = [
-    {
-      href: `mailto:${profile.email}`,
-      text: "Email",
-      description: profile.email,
-      icon: <Mail size={24} />,
-      isExternal: true,
-    },
+  // ポップオーバー外をクリックしたら閉じる処理
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node)
+      ) {
+        setIsFollowOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // SNSリンクの定義
+  const socialLinks = [
     {
       href: profile.githubUrl,
       text: "GitHub",
-      description: `@${profile.githubUrl.split("/").pop()}`,
-      icon: <Github size={24} />,
-      isExternal: true,
+      icon: <Github size={20} />,
     },
-  ];
+    // xUrlがある場合のみ表示
+    profile.xUrl
+      ? {
+          href: profile.xUrl,
+          text: "X (Twitter)",
+          icon: <Twitter size={20} />,
+        }
+      : null,
+    {
+      href: `mailto:${profile.email}`,
+      text: "Email",
+      icon: <Mail size={20} />,
+    },
+  ].filter(Boolean); // nullを除外
 
   return (
     <div className="flex justify-center min-h-screen font-sans transition-colors duration-300">
       <div className="w-full max-w-xl my-10 mx-4 sm:mx-0">
         {/* ヘッダー */}
-        <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-4 border-b-2 border-black dark:border-slate-700 flex items-center justify-between mb-8">
+        <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-4 border-b-2 border-black dark:border-slate-700 flex items-center justify-between mb-8 relative">
           <div className="flex items-center space-x-3">
-            {/* アイコンを丸くする (rounded-fullを追加) */}
+            {/* アイコンは丸く */}
             <img
               src={profile.avatarUrl}
               alt="avatar"
@@ -122,14 +147,46 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </div>
           </div>
 
-          {/* ダークモードボタンを丸くする (rounded-fullを追加) */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 border border-black dark:border-slate-500 transition-colors dark:text-white"
-            aria-label="Toggle Dark Mode"
-          >
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          <div className="flex items-center space-x-3" ref={popoverRef}>
+            {/* Followボタン (角丸なし) */}
+            <button
+              onClick={() => setIsFollowOpen(!isFollowOpen)}
+              className="px-3 py-1.5 text-sm font-bold border-2 border-black dark:border-slate-500 hover:bg-black hover:text-white dark:hover:bg-slate-700 transition-colors dark:text-white bg-white dark:bg-slate-900"
+            >
+              Follow
+            </button>
+
+            {/* ダークモードボタン (丸く) */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 border border-black dark:border-slate-500 transition-colors dark:text-white"
+              aria-label="Toggle Dark Mode"
+            >
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            {/* SNSポップオーバー (角丸なし) */}
+            {isFollowOpen && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-900 border-2 border-black dark:border-slate-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] z-20">
+                <ul className="py-1">
+                  {socialLinks.map((link: any) => (
+                    <li key={link.text}>
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-3 px-4 py-3 text-sm font-bold text-black dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                        onClick={() => setIsFollowOpen(false)}
+                      >
+                        {link.icon}
+                        <span>{link.text}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </header>
 
         <main className="space-y-12">
@@ -221,6 +278,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                       <Github size={16} />
                       <span>GitHub</span>
                     </a>
+                    {/* 追加: WebサイトURLがある場合のみ表示 */}
                     {repo.homepageUrl && (
                       <a
                         href={repo.homepageUrl}
@@ -269,6 +327,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                         </h3>
                         <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
                           <span>{article.pubDate}</span>
+                          {/* likedCountがある場合のみ表示 (RSSでは非表示) */}
                           {article.likedCount !== undefined && (
                             <span className="flex items-center text-pink-500 font-bold">
                               <Heart size={12} className="mr-1 fill-pink-500" />
@@ -290,37 +349,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   No articles found.
                 </div>
               )}
-            </div>
-          </section>
-
-          {/* Links */}
-          <section>
-            <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 ml-1">
-              Links
-            </h2>
-            <div className="border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-              {links.map((link) => (
-                <a
-                  key={link.text}
-                  href={link.href}
-                  target={link.isExternal ? "_blank" : "_self"}
-                  rel={link.isExternal ? "noopener noreferrer" : undefined}
-                  className="flex items-center space-x-4 p-4 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors border-b border-gray-200 dark:border-slate-700 last:border-b-0"
-                >
-                  <div className="text-black dark:text-slate-200">
-                    {link.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-base font-bold text-black dark:text-white">
-                      {link.text}
-                    </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {link.description}
-                    </p>
-                  </div>
-                  <ArrowRight size={16} className="text-gray-400" />
-                </a>
-              ))}
             </div>
           </section>
         </main>
