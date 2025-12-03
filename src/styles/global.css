@@ -2,3 +2,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  /* モダンなドット背景パターン */
+  .bg-dot-pattern {
+    background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  
+  :is(.dark .bg-dot-pattern) {
+    background-image: radial-gradient(circle, #27272a 1px, transparent 1px);
+  }
+}

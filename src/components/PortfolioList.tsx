@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import {
   User,
-  History,
   Github,
   FolderCode,
   FileText,
@@ -10,15 +9,15 @@ import {
   Mail,
   Sun,
   Moon,
-  Globe,
-  Heart,
   Twitter,
   Linkedin,
   BookOpen,
-  MapPin,
+  Code2,
+  Globe,
+  Star,
 } from "lucide-react";
 
-// --- 型定義 (変更なし) ---
+// --- 型定義 ---
 interface Repository {
   name: string;
   description: string;
@@ -88,158 +87,263 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     }
   };
 
-  // 共通のカードスタイル（ハードシャドウ + ボーダー）
-  const cardClass =
-    "bg-white dark:bg-slate-900 border-2 border-black dark:border-slate-700 " +
-    "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] " +
-    "rounded-xl overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)]";
+  // --- スタイル定義 ---
+  // ベースカードスタイル: ボーダーとシャドウを強調したネオブルータリズム風
+  // Dark Mode: slate(青み) -> zinc(無彩色) に変更し、よりソリッドな黒へ
+  const cardBaseClass =
+    "relative flex flex-col bg-white dark:bg-zinc-900 " +
+    "border-2 border-black dark:border-zinc-700 " +
+    "rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] " +
+    "dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] " +
+    "transition-all duration-300 hover:-translate-y-1 " +
+    "hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)]";
+
+  // SNSボタン用スタイル
+  const socialBtnClass = `${cardBaseClass} items-center justify-center p-4 gap-3 hover:bg-gray-50 dark:hover:bg-zinc-800 group`;
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0] dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300 p-4 md:p-8">
-      {/* --- Bento Grid Layout Container --- */}
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {/* 1. Profile Hero Card (Large, spans 2 columns) */}
+    <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+      {/* 背景パターン (Global CSSで定義した .bg-dot-pattern を使用) */}
+      <div className="fixed inset-0 pointer-events-none bg-dot-pattern opacity-60 z-0" />
+
+      {/* --- Main Content --- */}
+      <div className="relative z-10 max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* 1. Profile Hero Card (Large) */}
         <div
-          className={`${cardClass} md:col-span-2 lg:col-span-2 row-span-2 p-6 md:p-8 flex flex-col justify-between relative group`}
+          className={`${cardBaseClass} md:col-span-2 lg:col-span-2 row-span-2 p-6 md:p-8 justify-between`}
         >
           <div>
-            <div className="flex justify-between items-start mb-4">
-              <img
-                src={profile.avatarUrl}
-                alt="avatar"
-                className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-black dark:border-white object-cover"
-              />
+            <div className="flex justify-between items-start mb-6">
+              <div className="relative">
+                <img
+                  src={profile.avatarUrl}
+                  alt="avatar"
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-black dark:border-zinc-200 object-cover bg-white"
+                />
+                <div className="absolute -bottom-2 -right-2 bg-green-400 w-6 h-6 rounded-full border-2 border-black dark:border-zinc-900 animate-pulse"></div>
+              </div>
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full border-2 border-black dark:border-slate-400 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+                className="p-3 rounded-full border-2 border-black dark:border-zinc-400 hover:bg-black hover:text-white dark:hover:bg-zinc-200 dark:hover:text-black transition-colors"
+                aria-label="Toggle Theme"
               >
                 {isDark ? <Sun size={20} /> : <Moon size={20} />}
               </button>
             </div>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-2">
+
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-2 dark:text-white">
               {profile.name}
             </h1>
-            <p className="text-sm md:text-base font-bold text-gray-600 dark:text-gray-400 flex items-center gap-2 mb-4">
-              <User size={18} />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-white dark:bg-white dark:text-black rounded-full text-sm font-bold mb-4">
+              <User size={16} />
               {profile.role}
-            </p>
-            <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            </div>
+            <p className="text-base md:text-lg leading-relaxed text-zinc-600 dark:text-zinc-400 font-medium">
               {profile.bio}
             </p>
           </div>
 
-          <div className="mt-6 pt-6 border-t-2 border-dashed border-gray-300 dark:border-slate-700">
+          <div className="mt-8 pt-6 border-t-2 border-dashed border-zinc-200 dark:border-zinc-700">
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">
+              Interests
+            </p>
             <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1 bg-gray-100 dark:bg-slate-800 text-xs font-bold rounded-full">
-                🚀 Exploring
-              </span>
-              <span className="px-3 py-1 bg-gray-100 dark:bg-slate-800 text-xs font-bold rounded-full">
-                💻 Web Dev
-              </span>
-              <span className="px-3 py-1 bg-gray-100 dark:bg-slate-800 text-xs font-bold rounded-full">
-                Infrastructure
-              </span>
+              {[
+                "Web Development",
+                "Infrastructure",
+                "Astro",
+                "React",
+                "Cloud",
+              ].map((tag) => (
+                <span
+                  key={tag}
+                  className="px-3 py-1 bg-gray-100 dark:bg-zinc-800 text-xs font-bold rounded-md border border-zinc-200 dark:border-zinc-600"
+                >
+                  #{tag}
+                </span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* 2. Social Links Grid (Small cards) */}
-        <div className="md:col-span-1 lg:col-span-2 grid grid-cols-2 gap-4">
+        {/* 2. Social Links Grid */}
+        <div className="md:col-span-1 lg:col-span-2 grid grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* GitHub */}
           <a
             href={profile.githubUrl}
             target="_blank"
             rel="noreferrer"
-            className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
+            className={socialBtnClass}
           >
-            <Github size={32} />
+            <Github
+              size={28}
+              className="group-hover:scale-110 transition-transform"
+            />
             <span className="font-bold">GitHub</span>
           </a>
+
+          {/* X (Twitter) */}
           {profile.xUrl && (
             <a
               href={profile.xUrl}
               target="_blank"
               rel="noreferrer"
-              className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
+              className={socialBtnClass}
             >
-              <Twitter size={32} />
-              <span className="font-bold">X / Twitter</span>
+              <Twitter
+                size={28}
+                className="group-hover:scale-110 transition-transform text-sky-500"
+              />
+              <span className="font-bold">X</span>
             </a>
           )}
+
+          {/* Zenn */}
           {profile.zennUrl && (
             <a
               href={profile.zennUrl}
               target="_blank"
               rel="noreferrer"
-              className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 text-[#3EA8FF] hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
+              className={socialBtnClass}
             >
-              <FileText size={32} />
+              <FileText
+                size={28}
+                className="group-hover:scale-110 transition-transform text-[#3EA8FF]"
+              />
               <span className="font-bold">Zenn</span>
             </a>
           )}
-          <a
-            href={`mailto:${profile.email}`}
-            className={`${cardClass} p-4 flex flex-col items-center justify-center gap-2 hover:bg-[#f0f0f0] dark:hover:bg-slate-800`}
-          >
-            <Mail size={32} />
+
+          {/* Qiita (New!) */}
+          {profile.qiitaUrl && (
+            <a
+              href={profile.qiitaUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={socialBtnClass}
+            >
+              <div className="w-7 h-7 bg-[#55c500] text-white flex items-center justify-center rounded font-bold text-lg group-hover:scale-110 transition-transform">
+                Q
+              </div>
+              <span className="font-bold">Qiita</span>
+            </a>
+          )}
+
+          {/* LinkedIn (New!) */}
+          {profile.linkedinUrl && (
+            <a
+              href={profile.linkedinUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={socialBtnClass}
+            >
+              <Linkedin
+                size={28}
+                className="group-hover:scale-110 transition-transform text-[#0a66c2]"
+              />
+              <span className="font-bold">LinkedIn</span>
+            </a>
+          )}
+
+          {/* Email */}
+          <a href={`mailto:${profile.email}`} className={socialBtnClass}>
+            <Mail
+              size={28}
+              className="group-hover:scale-110 transition-transform text-orange-500"
+            />
             <span className="font-bold">Email</span>
           </a>
         </div>
 
-        {/* 3. Projects Header */}
-        <div className="col-span-1 md:col-span-3 lg:col-span-4 mt-8 mb-2 flex items-center gap-2">
-          <FolderCode className="text-black dark:text-white" />
-          <h2 className="text-2xl font-black uppercase tracking-wider">
+        {/* 3. Projects Section */}
+        <div className="col-span-1 md:col-span-3 lg:col-span-4 mt-8 flex items-center gap-3">
+          <div className="p-2 bg-black dark:bg-white text-white dark:text-black rounded-lg">
+            <FolderCode size={24} />
+          </div>
+          <h2 className="text-2xl font-black uppercase tracking-wider dark:text-white">
             Pinned Projects
           </h2>
         </div>
 
-        {/* 4. Project Cards */}
+        {/* Project Cards (Updated Logic) */}
         {repos.map((repo) => (
-          <a
+          <div
             key={repo.url}
-            href={repo.url}
-            target="_blank"
-            rel="noreferrer"
-            className={`${cardClass} col-span-1 p-5 flex flex-col h-full hover:bg-yellow-50 dark:hover:bg-slate-800/50`}
+            className={`${cardBaseClass} col-span-1 p-5 h-full`}
           >
-            <div className="flex justify-between items-start mb-3">
-              <div className="p-2 bg-black dark:bg-white text-white dark:text-black rounded-lg">
-                <Github size={20} />
+            {/* Header */}
+            <div className="flex justify-between items-start mb-4">
+              <Code2 size={24} className="text-zinc-400" />
+              <div className="flex items-center gap-1 text-xs font-bold bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded">
+                <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                {repo.stargazerCount}
               </div>
-              <ExternalLink size={18} className="text-gray-400" />
             </div>
 
-            <h3 className="text-lg font-bold mb-2 line-clamp-1">{repo.name}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3 flex-grow">
-              {repo.description || "No description provided."}
-            </p>
+            {/* Content */}
+            <div className="flex-grow">
+              <h3 className="text-lg font-bold mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {repo.name}
+              </h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 line-clamp-3">
+                {repo.description || "No description provided."}
+              </p>
+            </div>
 
-            <div className="flex items-center justify-between text-xs font-bold text-gray-500 dark:text-gray-400 mt-auto">
-              {repo.primaryLanguage ? (
-                <div className="flex items-center gap-1">
-                  <span
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: repo.primaryLanguage.color }}
-                  ></span>
-                  {repo.primaryLanguage.name}
-                </div>
+            {/* Footer Info */}
+            {repo.primaryLanguage && (
+              <div className="flex items-center gap-2 mb-4 text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                <span
+                  className="w-3 h-3 rounded-full border border-black/10"
+                  style={{ backgroundColor: repo.primaryLanguage.color }}
+                ></span>
+                {repo.primaryLanguage.name}
+              </div>
+            )}
+
+            {/* Action Buttons (2つに分離) */}
+            <div className="grid grid-cols-2 gap-2 mt-auto">
+              {/* GitHub Link */}
+              <a
+                href={repo.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 py-2 px-3 bg-black dark:bg-white text-white dark:text-black text-sm font-bold rounded hover:opacity-80 transition-opacity"
+              >
+                <Github size={16} />
+                Code
+              </a>
+
+              {/* Demo Link (もしhomepageUrlがあれば有効化、なければdisabled風) */}
+              {repo.homepageUrl ? (
+                <a
+                  href={repo.homepageUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 py-2 px-3 bg-zinc-200 dark:bg-zinc-800 text-black dark:text-white text-sm font-bold rounded hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+                >
+                  <Globe size={16} />
+                  Demo
+                </a>
               ) : (
-                <span></span>
+                <div className="flex items-center justify-center gap-2 py-2 px-3 bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-600 text-sm font-bold rounded cursor-not-allowed">
+                  <Globe size={16} />
+                  Demo
+                </div>
               )}
-              <div className="flex items-center gap-1">
-                <span>★</span> {repo.stargazerCount}
-              </div>
             </div>
-          </a>
+          </div>
         ))}
 
-        {/* 5. Articles Section (List Style but inside Grid) */}
+        {/* 4. Articles Section */}
         <div
-          className={`${cardClass} col-span-1 md:col-span-3 lg:col-span-4 p-6`}
+          className={`${cardBaseClass} col-span-1 md:col-span-3 lg:col-span-4 p-6 md:p-8`}
         >
-          <div className="flex items-center gap-2 mb-6">
-            <BookOpen className="text-black dark:text-white" />
-            <h2 className="text-2xl font-black uppercase tracking-wider">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-black dark:bg-white text-white dark:text-black rounded-lg">
+              <BookOpen size={24} />
+            </div>
+            <h2 className="text-2xl font-black uppercase tracking-wider dark:text-white">
               Latest Articles
             </h2>
           </div>
@@ -251,22 +355,19 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                 href={article.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col p-4 rounded-lg border-2 border-transparent hover:border-black dark:hover:border-slate-500 bg-gray-50 dark:bg-slate-800/50 transition-colors"
+                className="group flex flex-col p-4 rounded-lg bg-gray-50 dark:bg-zinc-800/50 border-2 border-transparent hover:border-black dark:hover:border-zinc-500 transition-all"
               >
-                <h3 className="font-bold text-base md:text-lg mb-2">
+                <h3 className="font-bold text-base md:text-lg mb-2 group-hover:underline decoration-2 underline-offset-2">
                   {article.title}
                 </h3>
-                <div className="flex items-center justify-between mt-auto text-xs font-bold text-gray-500">
+                <div className="flex items-center justify-between mt-auto text-xs font-bold text-zinc-500 dark:text-zinc-400">
                   <div className="flex items-center gap-2">
                     <FileText size={14} />
                     <span>{article.pubDate}</span>
                   </div>
-                  {article.likedCount !== undefined && (
-                    <span className="flex items-center text-pink-500">
-                      <Heart size={12} className="mr-1 fill-pink-500" />
-                      {article.likedCount}
-                    </span>
-                  )}
+                  <span className="flex items-center gap-1 text-black dark:text-white bg-white dark:bg-zinc-700 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-600">
+                    Read Article <ExternalLink size={10} />
+                  </span>
                 </div>
               </a>
             ))}
@@ -274,9 +375,13 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         </div>
 
         {/* Footer */}
-        <footer className="col-span-1 md:col-span-3 lg:col-span-4 py-8 text-center text-sm font-bold text-gray-400">
-          © {new Date().getFullYear()} {profile.name}. Built with Astro &
-          Tailwind.
+        <footer className="col-span-1 md:col-span-3 lg:col-span-4 py-12 text-center">
+          <p className="text-sm font-bold text-zinc-400 dark:text-zinc-600">
+            © {new Date().getFullYear()} {profile.name}.
+            {/* <br className="md:hidden" />
+            Built with <span className="text-orange-500">Astro</span> &{" "}
+            <span className="text-sky-500">Tailwind</span>. */}
+          </p>
         </footer>
       </div>
     </div>
