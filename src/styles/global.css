@@ -4,13 +4,14 @@
 @tailwind utilities;
 
 @layer utilities {
-  /* モダンなドット背景パターン */
+  /* ライトモード用ドット（少し濃いグレー） */
   .bg-dot-pattern {
-    background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+    background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px); /* gray-300 */
     background-size: 24px 24px;
   }
   
+  /* ダークモード用ドット（少し明るいジンク） */
   :is(.dark .bg-dot-pattern) {
-    background-image: radial-gradient(circle, #27272a 1px, transparent 1px);
+    background-image: radial-gradient(circle, #3f3f46 1px, transparent 1px); /* zinc-700 */
   }
 }

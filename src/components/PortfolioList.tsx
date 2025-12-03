@@ -88,8 +88,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
   };
 
   // --- スタイル定義 ---
-  // ベースカードスタイル: ボーダーとシャドウを強調したネオブルータリズム風
-  // Dark Mode: slate(青み) -> zinc(無彩色) に変更し、よりソリッドな黒へ
+  // Dark Mode: slate(青み) -> zinc(無彩色・濃いグレー) に変更
   const cardBaseClass =
     "relative flex flex-col bg-white dark:bg-zinc-900 " +
     "border-2 border-black dark:border-zinc-700 " +
@@ -98,17 +97,16 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     "transition-all duration-300 hover:-translate-y-1 " +
     "hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)]";
 
-  // SNSボタン用スタイル
   const socialBtnClass = `${cardBaseClass} items-center justify-center p-4 gap-3 hover:bg-gray-50 dark:hover:bg-zinc-800 group`;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
-      {/* 背景パターン (Global CSSで定義した .bg-dot-pattern を使用) */}
-      <div className="fixed inset-0 pointer-events-none bg-dot-pattern opacity-60 z-0" />
+      {/* 背景パターン (CSSで定義したクラスを使用) */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-dot-pattern opacity-60" />
 
       {/* --- Main Content --- */}
       <div className="relative z-10 max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {/* 1. Profile Hero Card (Large) */}
+        {/* 1. Profile Hero Card */}
         <div
           className={`${cardBaseClass} md:col-span-2 lg:col-span-2 row-span-2 p-6 md:p-8 justify-between`}
         >
@@ -120,6 +118,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   alt="avatar"
                   className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-black dark:border-zinc-200 object-cover bg-white"
                 />
+                {/* 緑の点滅（ステータスアイコン） */}
                 <div className="absolute -bottom-2 -right-2 bg-green-400 w-6 h-6 rounded-full border-2 border-black dark:border-zinc-900 animate-pulse"></div>
               </div>
               <button
@@ -168,7 +167,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
         {/* 2. Social Links Grid */}
         <div className="md:col-span-1 lg:col-span-2 grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* GitHub */}
           <a
             href={profile.githubUrl}
             target="_blank"
@@ -182,7 +180,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             <span className="font-bold">GitHub</span>
           </a>
 
-          {/* X (Twitter) */}
           {profile.xUrl && (
             <a
               href={profile.xUrl}
@@ -198,7 +195,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </a>
           )}
 
-          {/* Zenn */}
           {profile.zennUrl && (
             <a
               href={profile.zennUrl}
@@ -214,7 +210,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </a>
           )}
 
-          {/* Qiita (New!) */}
+          {/* Qiita (反映されていなかった箇所) */}
           {profile.qiitaUrl && (
             <a
               href={profile.qiitaUrl}
@@ -229,7 +225,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </a>
           )}
 
-          {/* LinkedIn (New!) */}
+          {/* LinkedIn (反映されていなかった箇所) */}
           {profile.linkedinUrl && (
             <a
               href={profile.linkedinUrl}
@@ -245,7 +241,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </a>
           )}
 
-          {/* Email */}
           <a href={`mailto:${profile.email}`} className={socialBtnClass}>
             <Mail
               size={28}
@@ -265,7 +260,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           </h2>
         </div>
 
-        {/* Project Cards (Updated Logic) */}
+        {/* 4. Project Cards (GitHub / Demo ボタン分離) */}
         {repos.map((repo) => (
           <div
             key={repo.url}
@@ -303,7 +298,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
             {/* Action Buttons (2つに分離) */}
             <div className="grid grid-cols-2 gap-2 mt-auto">
-              {/* GitHub Link */}
+              {/* Code Button */}
               <a
                 href={repo.url}
                 target="_blank"
@@ -314,7 +309,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                 Code
               </a>
 
-              {/* Demo Link (もしhomepageUrlがあれば有効化、なければdisabled風) */}
+              {/* Demo Button */}
               {repo.homepageUrl ? (
                 <a
                   href={repo.homepageUrl}
@@ -335,7 +330,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           </div>
         ))}
 
-        {/* 4. Articles Section */}
+        {/* 5. Articles Section */}
         <div
           className={`${cardBaseClass} col-span-1 md:col-span-3 lg:col-span-4 p-6 md:p-8`}
         >
@@ -378,9 +373,9 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         <footer className="col-span-1 md:col-span-3 lg:col-span-4 py-12 text-center">
           <p className="text-sm font-bold text-zinc-400 dark:text-zinc-600">
             © {new Date().getFullYear()} {profile.name}.
-            {/* <br className="md:hidden" />
+            <br className="md:hidden" />
             Built with <span className="text-orange-500">Astro</span> &{" "}
-            <span className="text-sky-500">Tailwind</span>. */}
+            <span className="text-sky-500">Tailwind</span>.
           </p>
         </footer>
       </div>
