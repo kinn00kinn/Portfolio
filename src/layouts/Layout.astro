@@ -1,18 +1,22 @@
 ---
 // src/layouts/Layout.astro
-import { ViewTransitions } from 'astro:transitions';
-import '../styles/global.css';
+import { ViewTransitions } from "astro:transitions";
+import "../styles/global.css";
 
 interface Props {
-	title: string;
-    description?: string;
-    image?: string;
+  title: string;
+  description?: string;
+  image?: string;
 }
 
-const { title, description = "Kinn00kinn's Portfolio", image = "/og-image.png" } = Astro.props;
+const {
+  title,
+  description = "Kinn00kinn's Portfolio",
+  image = "/og-image.png",
+} = Astro.props;
 
 // サイトのベースURLを取得 (astro.config.mjsのsite設定、なければローカルホスト)
-const site = Astro.site ? Astro.site.href : 'http://localhost:4321';
+const site = Astro.site ? Astro.site.href : "http://localhost:4321";
 
 // 画像の完全なURLを生成（URL結合の安全性を高める処理）
 // new URL() はベースURLの末尾スラッシュの有無を自動調整してくれます
@@ -21,52 +25,71 @@ const ogImageUrl = new URL(image, site).href;
 
 <!doctype html>
 <html lang="ja" class="scroll-smooth">
-	<head>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-JB2MX4YNF5"></script>
-        <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-JB2MX4YNF5');
-        </script>
-        
-		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.png" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JB2MX4YNF5"
+    ></script>
+    <script>
+      // TypeScript用の型定義拡張
+      declare global {
+        interface Window {
+          dataLayer: any[];
+        }
+      }
 
-        {/* --- OGP設定 (共通) --- */}
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={Astro.url} />
-        <meta property="og:site_name" content="Kinn00kinn Portfolio" />
-        <meta property="og:locale" content="ja_JP" />
+      window.dataLayer = window.dataLayer || [];
 
-        {/* --- OGP画像設定 (詳細) --- */}
-        {/* TeamsやLINEなどのプラットフォームのために詳細情報を追加 */}
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:image:url" content={ogImageUrl} />
-        <meta property="og:image:secure_url" content={ogImageUrl} />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content={title} />
+      // 関数定義を修正
+      function gtag(...args: any[]) {
+        window.dataLayer.push(args);
+      }
 
-        {/* --- Twitter Card設定 --- */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={Astro.url} />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImageUrl} />
+      // 型キャストしてグローバルスコープに関数を公開（必要な場合）
+      (window as any).gtag = gtag;
 
-        {/* 滑らかな遷移のためのコンポーネント */}
-        <ViewTransitions />
-	</head>
-	<body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 transition-colors duration-300">
-		<slot />
-	</body>
+      gtag("js", new Date());
+      gtag("config", "G-JB2MX4YNF5");
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    {/* --- OGP設定 (共通) --- */}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:site_name" content="Kinn00kinn Portfolio" />
+
+    <meta property="og:locale" content="ja_JP" />
+
+    {/* --- OGP画像設定 (詳細) --- */}
+    {/* TeamsやLINEなどのプラットフォームのために詳細情報を追加 */}
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:url" content={ogImageUrl} />
+    <meta property="og:image:secure_url" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta property="og:image:alt" content={title} />
+
+    {/* --- Twitter Card設定 --- */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={Astro.url} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {/* 滑らかな遷移のためのコンポーネント */}
+    <ViewTransitions />
+  </head>
+  <body
+    class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 transition-colors duration-300"
+  >
+    <slot />
+  </body>
 </html>
