@@ -17,8 +17,6 @@ import {
   Star,
   Terminal,
   Hash,
-  Cpu,
-  Monitor,
 } from "lucide-react";
 import { Tilt } from "react-tilt";
 import TypewriterEffect from "./TypewriterEffect";
@@ -123,33 +121,86 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
   // --- スタイル定義 ---
 
-  // Glassmorphism Card Style
   const glassCardClass =
     "relative flex flex-col " +
-    "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md " + // Frosted glass
-    "border border-white/20 dark:border-zinc-700/50 " + // Subtle border
+    "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md " +
+    "border border-white/20 dark:border-zinc-700/50 " +
     "rounded-xl overflow-hidden " +
     "shadow-lg dark:shadow-[0_0_15px_rgba(0,0,0,0.5)] " +
     "transition-all duration-300 ";
 
-  // Tilt Options
   const tiltOptions = {
-    max: 10, // Max tilt angle
-    scale: 1.02, // Scale on hover
-    speed: 400, // Transition speed
-    glare: true, // Add glare effect
+    max: 10,
+    scale: 1.02,
+    speed: 400,
+    glare: true,
     "max-glare": 0.3,
   };
 
-  // 装飾用テキスト
   const monoText =
     "font-mono text-xs text-zinc-500 dark:text-zinc-400 tracking-wider";
+
+  // --- 新しいソーシャルカードコンポーネント ---
+  const SocialCard = ({
+    href,
+    icon: Icon,
+    label,
+    id,
+    hoverColorClass, // ホバー時の色 (border & text)
+  }: {
+    href: string;
+    icon: React.ElementType;
+    label: string;
+    id: string;
+    hoverColorClass: string;
+  }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className={`group relative flex flex-col justify-between p-5 h-32 border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-black transition-all duration-300 overflow-hidden ${hoverColorClass}`}
+    >
+      {/* Background Hover Effect */}
+      <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left -z-0" />
+
+      {/* Header: ID */}
+      <div className="flex justify-between items-start relative z-10">
+        <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-600 group-hover:text-current transition-colors opacity-70">
+          [{id}]
+        </span>
+        <ExternalLink
+          size={14}
+          className="text-zinc-300 dark:text-zinc-700 group-hover:text-current transition-colors opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 duration-300"
+        />
+      </div>
+
+      {/* Content: Icon & Label */}
+      <div className="flex flex-col gap-2 relative z-10 mt-auto">
+        <Icon
+          size={24}
+          className="text-zinc-600 dark:text-zinc-400 group-hover:text-current transition-colors duration-300"
+        />
+        <span className="font-black text-xl md:text-2xl uppercase tracking-tighter text-zinc-700 dark:text-zinc-300 group-hover:text-current transition-colors duration-300">
+          {label}
+        </span>
+      </div>
+
+      {/* Decorative Corner (Bottom Right) */}
+      <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-zinc-300 dark:border-zinc-700 group-hover:border-current transition-colors duration-300 opacity-50" />
+    </a>
+  );
 
   return (
     <>
       {isLoading && <LoadingScreen onComplete={handleLoadComplete} />}
-      
-      <div className={`min-h-screen bg-zinc-100 dark:bg-[#050505] font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-300 relative overflow-hidden selection:bg-green-500/30 ${isLoading ? 'opacity-0' : 'opacity-100 animate-in fade-in duration-1000'}`}>
+
+      <div
+        className={`min-h-screen bg-zinc-100 dark:bg-[#050505] font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-300 relative overflow-hidden selection:bg-green-500/30 ${
+          isLoading
+            ? "opacity-0"
+            : "opacity-100 animate-in fade-in duration-1000"
+        }`}
+      >
         <CustomCursor />
         <InteractiveBackground />
 
@@ -174,7 +225,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   activeSection === item.id
                     ? "bg-white dark:bg-zinc-800 shadow-md scale-110"
                     : "bg-transparent"
-                  }`}
+                }`}
               >
                 <item.icon size={20} />
               </div>
@@ -191,7 +242,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
         {/* --- Main Content --- */}
         <div className="relative z-10 max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:pl-24">
-          
           {/* 1. Profile Hero Card */}
           <div
             id="profile"
@@ -236,10 +286,23 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-zinc-900 text-white dark:bg-white dark:text-black rounded-full text-sm font-bold mb-5 font-mono shadow-[0_0_15px_rgba(0,0,0,0.2)] dark:shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                   <Terminal size={14} />
-                  {!isLoading && <TypewriterEffect text={profile.role} speed={50} startDelay={500} />}
+                  {!isLoading && (
+                    <TypewriterEffect
+                      text={profile.role}
+                      speed={50}
+                      startDelay={500}
+                    />
+                  )}
                 </div>
                 <p className="text-base md:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300 font-medium border-l-2 border-zinc-300 dark:border-zinc-700 pl-4">
-                  {!isLoading && <TypewriterEffect text={profile.bio} speed={30} startDelay={1500} cursor={false} />}
+                  {!isLoading && (
+                    <TypewriterEffect
+                      text={profile.bio}
+                      speed={30}
+                      startDelay={1500}
+                      cursor={false}
+                    />
+                  )}
                 </p>
               </div>
 
@@ -263,56 +326,77 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               </div>
             </Tilt>
 
-            {/* Social Links Grid */}
-            <div className="md:col-span-1 lg:col-span-2 grid grid-cols-2 lg:grid-cols-3 gap-4 content-start">
-              <Tilt options={tiltOptions} className="h-full">
-                <TechButton href={profile.githubUrl} icon={Github} className="h-full w-full" variant="secondary">
-                  GitHub
-                </TechButton>
-              </Tilt>
+            {/* Social Links Grid - Updated for High Visibility & Brand Colors */}
+            <div className="md:col-span-1 lg:col-span-2 grid grid-cols-2 gap-3 content-start">
+              <SocialCard
+                href={profile.githubUrl}
+                icon={Github}
+                label="GitHub"
+                id="LNK_01"
+                // GitHub: モノクロ (黒/白)
+                hoverColorClass="hover:border-zinc-900 dark:hover:border-white hover:text-zinc-900 dark:hover:text-white"
+              />
 
               {profile.xUrl && (
-                <Tilt options={tiltOptions} className="h-full">
-                  <TechButton href={profile.xUrl} icon={Twitter} className="h-full w-full" variant="secondary">
-                    X / Twitter
-                  </TechButton>
-                </Tilt>
+                <SocialCard
+                  href={profile.xUrl}
+                  icon={Twitter}
+                  label="Twitter"
+                  id="LNK_02"
+                  // X (Twitter): 青 (または黒)
+                  hoverColorClass="hover:border-sky-500 hover:text-sky-500"
+                />
               )}
 
               {profile.zennUrl && (
-                <Tilt options={tiltOptions} className="h-full">
-                  <TechButton href={profile.zennUrl} icon={FileText} className="h-full w-full" variant="secondary">
-                    Zenn
-                  </TechButton>
-                </Tilt>
+                <SocialCard
+                  href={profile.zennUrl}
+                  icon={FileText}
+                  label="Zenn"
+                  id="LNK_03"
+                  // Zenn: 水色 (#3EA8FF)
+                  hoverColorClass="hover:border-[#3EA8FF] hover:text-[#3EA8FF]"
+                />
               )}
 
               {profile.qiitaUrl && (
-                <Tilt options={tiltOptions} className="h-full">
-                  <TechButton href={profile.qiitaUrl} className="h-full w-full" variant="secondary">
-                    Qiita
-                  </TechButton>
-                </Tilt>
+                <SocialCard
+                  href={profile.qiitaUrl}
+                  icon={Code2}
+                  label="Qiita"
+                  id="LNK_04"
+                  // Qiita: 緑 (#55C500)
+                  hoverColorClass="hover:border-[#55C500] hover:text-[#55C500]"
+                />
               )}
 
               {profile.linkedinUrl && (
-                <Tilt options={tiltOptions} className="h-full">
-                  <TechButton href={profile.linkedinUrl} icon={Linkedin} className="h-full w-full" variant="secondary">
-                    LinkedIn
-                  </TechButton>
-                </Tilt>
+                <SocialCard
+                  href={profile.linkedinUrl}
+                  icon={Linkedin}
+                  label="LinkedIn"
+                  id="LNK_05"
+                  // LinkedIn: 青 (#0077B5)
+                  hoverColorClass="hover:border-[#0077B5] hover:text-[#0077B5]"
+                />
               )}
 
-              <Tilt options={tiltOptions} className="h-full">
-                <TechButton href={`mailto:${profile.email}`} icon={Mail} className="h-full w-full" variant="secondary">
-                  Email
-                </TechButton>
-              </Tilt>
+              <SocialCard
+                href={`mailto:${profile.email}`}
+                icon={Mail}
+                label="Email"
+                id="LNK_06"
+                // Email: オレンジ/赤 (Gmail的な色)
+                hoverColorClass="hover:border-[#EA4335] hover:text-[#EA4335]"
+              />
             </div>
           </div>
 
           {/* 2. Projects Section */}
-          <div id="projects" className="col-span-1 md:col-span-3 lg:col-span-4 mb-12">
+          <div
+            id="projects"
+            className="col-span-1 md:col-span-3 lg:col-span-4 mb-12"
+          >
             <div className="flex items-end justify-between border-b border-zinc-300 dark:border-zinc-700 pb-4 mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded shadow-[0_0_10px_rgba(0,0,0,0.2)] dark:shadow-[0_0_10px_rgba(255,255,255,0.3)]">
@@ -328,7 +412,9 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {repos.map((repo, i) => (
                 <Tilt key={repo.url} options={tiltOptions} className="h-full">
-                  <div className={`${glassCardClass} h-full p-6 group hover:border-zinc-400 dark:hover:border-zinc-500`}>
+                  <div
+                    className={`${glassCardClass} h-full p-6 group hover:border-zinc-400 dark:hover:border-zinc-500`}
+                  >
                     {/* Header */}
                     <div className="flex justify-between items-start mb-4">
                       <span className={`${monoText}`}>
@@ -375,12 +461,20 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
                     {/* Action Buttons */}
                     <div className="grid grid-cols-2 gap-3 mt-auto">
-                      <TechButton href={repo.url} icon={Github} variant="secondary">
+                      <TechButton
+                        href={repo.url}
+                        icon={Github}
+                        variant="secondary"
+                      >
                         CODE
                       </TechButton>
 
                       {repo.homepageUrl ? (
-                        <TechButton href={repo.homepageUrl} icon={Globe} variant="primary">
+                        <TechButton
+                          href={repo.homepageUrl}
+                          icon={Globe}
+                          variant="primary"
+                        >
                           DEMO
                         </TechButton>
                       ) : (
@@ -415,8 +509,11 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                 <div key={article.link} className="relative group">
                   {/* Timeline Dot */}
                   <div className="absolute -left-[41px] top-4 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 border-4 border-zinc-300 dark:border-zinc-700 group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-colors z-10"></div>
-                  
-                  <Tilt options={{...tiltOptions, scale: 1.01}} className="w-full">
+
+                  <Tilt
+                    options={{ ...tiltOptions, scale: 1.01 }}
+                    className="w-full"
+                  >
                     <a
                       href={article.link}
                       target="_blank"
@@ -425,17 +522,23 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     >
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                          <div className={`flex items-center gap-3 mb-2 opacity-70 ${monoText}`}>
-                            <span className="bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-[10px]">LOG_{String(i + 1).padStart(3, "0")}</span>
+                          <div
+                            className={`flex items-center gap-3 mb-2 opacity-70 ${monoText}`}
+                          >
+                            <span className="bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-[10px]">
+                              LOG_{String(i + 1).padStart(3, "0")}
+                            </span>
                             <span>{article.pubDate.replace(/-/g, ".")}</span>
                           </div>
                           <h3 className="font-bold text-lg md:text-xl text-zinc-900 dark:text-white group-hover/card:text-blue-600 dark:group-hover/card:text-blue-400 transition-colors">
                             {article.title}
                           </h3>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
-                          <span className="group-hover/card:translate-x-1 transition-transform">Read Article</span>
+                          <span className="group-hover/card:translate-x-1 transition-transform">
+                            Read Article
+                          </span>
                           <ExternalLink size={14} />
                         </div>
                       </div>
@@ -457,10 +560,13 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </span>
-                <span className="text-green-600 dark:text-green-400 font-bold">ONLINE</span>
+                <span className="text-green-600 dark:text-green-400 font-bold">
+                  ONLINE
+                </span>
               </p>
               <p className="opacity-80 text-zinc-600 dark:text-zinc-400">
-                © {new Date().getFullYear()} {profile.name}. ALL RIGHTS RESERVED.
+                © {new Date().getFullYear()} {profile.name}. ALL RIGHTS
+                RESERVED.
               </p>
             </div>
           </footer>
