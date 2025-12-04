@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface TypewriterEffectProps {
   text: string;
@@ -12,48 +12,42 @@ const TypewriterEffect: React.FC<TypewriterEffectProps> = ({
   text,
   speed = 50,
   cursor = true,
-  className = '',
+  className = "",
   startDelay = 0,
 }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
-  const indexRef = useRef(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [displayedText, setDisplayedText] = useState("");
+  const [hasStarted, setHasStarted] = useState(false);
 
+  // 開始遅延の管理
   useEffect(() => {
-    // Reset state when text changes
-    setDisplayedText('');
-    setIsTypingComplete(false);
-    indexRef.current = 0;
-
-    // Clear any existing timers
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-
-    // Start delay
-    timeoutRef.current = setTimeout(() => {
-      intervalRef.current = setInterval(() => {
-        if (indexRef.current < text.length) {
-          setDisplayedText((prev) => prev + text.charAt(indexRef.current));
-          indexRef.current++;
-        } else {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-          setIsTypingComplete(true);
-        }
-      }, speed);
+    const timer = setTimeout(() => {
+      setHasStarted(true);
     }, startDelay);
+    return () => clearTimeout(timer);
+  }, [startDelay]);
 
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [text, speed, startDelay]);
+  // タイピングアニメーションの管理
+  useEffect(() => {
+    // 開始前または完了済みなら何もしない
+    if (!hasStarted || displayedText.length >= text.length) return;
+
+    const timer = setTimeout(() => {
+      // 現在の表示文字数に基づいて、次の1文字を含めた文字列を設定する
+      // これにより「飛ばし」が発生しなくなる
+      setDisplayedText(text.slice(0, displayedText.length + 1));
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [hasStarted, displayedText, text, speed]);
+
+  const isTypingComplete = displayedText.length === text.length;
 
   return (
     <span className={className}>
       {displayedText}
-      {cursor && !isTypingComplete && <span className="animate-pulse font-bold">_</span>}
+      {cursor && !isTypingComplete && (
+        <span className="animate-pulse font-bold">_</span>
+      )}
     </span>
   );
 };

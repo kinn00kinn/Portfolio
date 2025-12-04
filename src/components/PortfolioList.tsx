@@ -249,7 +249,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   <span>INTERESTS_ARRAY</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {["Web_Dev", "Infra", "Astro", "React", "Cloud"].map(
+                  {["Web_Dev", "Infra", "Astro", "React", "CFD"].map(
                     (tag, i) => (
                       <span
                         key={tag}
