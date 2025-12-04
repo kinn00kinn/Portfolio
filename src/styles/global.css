@@ -14,4 +14,48 @@
   :is(.dark .bg-dot-pattern) {
     background-image: radial-gradient(circle, #3f3f46 1px, transparent 1px); /* zinc-700 */
   }
+
+  /* Tech Borders */
+  .tech-border-bracket {
+    --b: 2px; /* border thickness */
+    --s: 10px; /* size of the corner */
+    --c: currentColor;
+    
+    padding: 10px;
+    border: var(--b) solid #0000; /* transparent border */
+    background:
+      conic-gradient(from 90deg at top    var(--b) left  var(--b),#0000 90deg,var(--c) 0) 0    0,
+      conic-gradient(from 180deg at top    var(--b) right var(--b),#0000 90deg,var(--c) 0) 100% 0,
+      conic-gradient(from 0deg   at bottom var(--b) left  var(--b),#0000 90deg,var(--c) 0) 0    100%,
+      conic-gradient(from -90deg at bottom var(--b) right var(--b),#0000 90deg,var(--c) 0) 100% 100%;
+    background-size: var(--s) var(--s);
+    background-repeat: no-repeat;
+  }
+
+  /* Glitch Animations */
+  @keyframes glitch-1 {
+    0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+    20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+    40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+    60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+    80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+    100% { clip-path: inset(30% 0 50% 0); transform: translate(1px, -1px); }
+  }
+
+  @keyframes glitch-2 {
+    0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+    20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
+    40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, 1px); }
+    60% { clip-path: inset(10% 0 80% 0); transform: translate(-1px, -2px); }
+    80% { clip-path: inset(50% 0 30% 0); transform: translate(1px, 2px); }
+    100% { clip-path: inset(70% 0 10% 0); transform: translate(-2px, 1px); }
+  }
+
+  .animate-glitch-1 {
+    animation: glitch-1 2.5s infinite linear alternate-reverse;
+  }
+  
+  .animate-glitch-2 {
+    animation: glitch-2 3s infinite linear alternate-reverse;
+  }
 }
