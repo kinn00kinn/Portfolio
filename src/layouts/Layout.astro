@@ -11,7 +11,7 @@ interface Props {
 
 const {
   title,
-  description = "Kinn00kinn's Portfolio",
+  description = "kinn00kinn's Portfolio",
   image = "/og-image.png",
 } = Astro.props;
 
@@ -62,7 +62,7 @@ const ogImageUrl = new URL(image, site).href;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url} />
-    <meta property="og:site_name" content="Kinn00kinn Portfolio" />
+    <meta property="og:site_name" content="kinn00kinn Portfolio" />
 
     <meta property="og:locale" content="ja_JP" />
 
