@@ -4,16 +4,18 @@ import Layout from "../layouts/Layout.astro";
 import { getGithubData } from "../lib/github";
 import { getZennArticles } from "../lib/zenn";
 import PortfolioList from "../components/PortfolioList";
-import { profile } from "../config"; // ← ここでインポート
+import { profile } from "../config"; // 前回の修正でconfig.tsを作成している前提
 
 // データを取得
 const { repos } = await getGithubData();
 const articles = await getZennArticles();
-
-// const profile = { ... } の定義は削除
 ---
 
-<Layout title={`${profile.name} - Portfolio`}>
+<Layout
+  title={`${profile.name} - Portfolio`}
+  description={profile.bio}
+  image="/og-image.png"
+>
   <PortfolioList
     profile={profile}
     repos={repos}
