@@ -1,12 +1,18 @@
 // src/pages/og-image.png.ts
 import satori from "satori";
 import sharp from "sharp";
+import { profile } from "../config"; // ← 共通データをインポート
 
 export const GET = async () => {
   // フォントをCDNから取得（Noto Sans JP Bold）
   const fontData = await fetch(
     "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansCJKjp-Bold.otf"
   ).then((res) => res.arrayBuffer());
+
+  // GithubのアイコンURLを生成 (profile.githubUrl からユーザー名を抽出して利用)
+  // 例: https://github.com/kinn00kinn -> https://github.com/kinn00kinn.png
+  const githubUser = profile.githubUrl.split("/").pop();
+  const avatarSrc = `https://github.com/${githubUser}.png`;
 
   // SatoriでJSXからSVGを生成
   const svg = await satori(
@@ -22,7 +28,7 @@ export const GET = async () => {
                 {
                   type: "img",
                   props: {
-                    src: "https://github.com/kinn00kinn.png",
+                    src: avatarSrc, // 動的に設定
                     width: 150,
                     height: 150,
                     style: { borderRadius: "50%", border: "4px solid black" },
@@ -35,7 +41,7 @@ export const GET = async () => {
                       {
                         type: "h1",
                         props: {
-                          children: "Kinn00kinn",
+                          children: profile.name, // configから名前を参照
                           style: {
                             fontSize: "64px",
                             fontWeight: "900",
@@ -46,7 +52,7 @@ export const GET = async () => {
                       {
                         type: "p",
                         props: {
-                          children: "Portfolio / KOSEN Advanced Course Student",
+                          children: `Portfolio / ${profile.role}`, // configからロールを参照
                           style: {
                             fontSize: "32px",
                             color: "#333",
@@ -69,7 +75,7 @@ export const GET = async () => {
                 alignItems: "center",
                 justifyContent: "center",
                 padding: "60px",
-                border: "8px solid black", // 角丸なし
+                border: "8px solid black",
                 backgroundColor: "white",
                 height: "100%",
                 width: "100%",
@@ -85,7 +91,7 @@ export const GET = async () => {
           padding: "40px",
         },
       },
-    } as any, // 【修正点1】ここ型定義エラーを回避するために as any を追加
+    } as any,
     {
       width: 1200,
       height: 630,
@@ -103,7 +109,6 @@ export const GET = async () => {
   const png = await sharp(Buffer.from(svg)).png().toBuffer();
 
   return new Response(png as any, {
-    // 【修正点2】Buffer型をResponseが受け取れるように as any を追加
     headers: {
       "Content-Type": "image/png",
     },

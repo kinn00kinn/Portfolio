@@ -1,33 +1,23 @@
 ---
 // src/pages/index.astro
-import Layout from '../layouts/Layout.astro';
-import { getGithubData } from '../lib/github';
-import { getZennArticles } from '../lib/zenn';
-import PortfolioList from '../components/PortfolioList';
+import Layout from "../layouts/Layout.astro";
+import { getGithubData } from "../lib/github";
+import { getZennArticles } from "../lib/zenn";
+import PortfolioList from "../components/PortfolioList";
+import { profile } from "../config"; // ← ここでインポート
 
 // データを取得
 const { repos } = await getGithubData();
 const articles = await getZennArticles();
 
-const profile = {
-  name: "kinn00kinn/kinn-kinn",
-  role: "高専専攻科/九州大学工学部",
-  bio: "Webとインフラと数値計算に興味があります",
-  githubUrl: "https://github.com/kinn00kinn",
-  xUrl: "https://twitter.com/", // あなたのXのプロフィールURLを設定してください
-  linkedinUrl:"https://www.linkedin.com/in/haruki00nakamura/",
-  zennUrl:"https://zenn.dev/kinnkinn",
-  qiitaUrl:"https://qiita.com/kinn00kinn",
-  email: "kinn@kinn-kinn.com", 
-  avatarUrl: "/kinnkinn.png", 
-};
+// const profile = { ... } の定義は削除
 ---
 
 <Layout title={`${profile.name} - Portfolio`}>
-	<PortfolioList 
-        profile={profile} 
-        repos={repos} 
-        articles={articles} 
-        client:load 
-    />
+  <PortfolioList
+    profile={profile}
+    repos={repos}
+    articles={articles}
+    client:load
+  />
 </Layout>
