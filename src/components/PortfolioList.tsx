@@ -258,7 +258,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full p-1 bg-gradient-to-br from-zinc-200 to-zinc-400 dark:from-zinc-700 dark:to-zinc-900">
                       <img
                         src={profile.avatarUrl}
-                        alt="avatar"
+                        alt={`${profile.name} avatar`}
                         className="w-full h-full rounded-full object-cover bg-white"
                       />
                     </div>
