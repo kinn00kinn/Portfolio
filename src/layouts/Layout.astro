@@ -26,25 +26,27 @@ const ogImageUrl = new URL(image, site).href;
 <!doctype html>
 <html lang="ja" class="scroll-smooth">
   <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JB2MX4YNF5"
-    ></script>
-    <script>
+    <script
+      type="text/partytown"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-JB2MX4YNF5"></script>
+    <script type="text/partytown">
       // TypeScript用の型定義拡張
-      declare global {
-        interface Window {
-          dataLayer: any[];
-        }
-      }
+      // declare global {
+      //   interface Window {
+      //     dataLayer: any[];
+      //   }
+      // }
 
       window.dataLayer = window.dataLayer || [];
 
       // 関数定義を修正
-      function gtag(...args: any[]) {
-        window.dataLayer.push(args);
+      function gtag() {
+        window.dataLayer.push(arguments);
       }
 
       // 型キャストしてグローバルスコープに関数を公開（必要な場合）
-      (window as any).gtag = gtag;
+      // (window as any).gtag = gtag;
 
       gtag("js", new Date());
       gtag("config", "G-JB2MX4YNF5");

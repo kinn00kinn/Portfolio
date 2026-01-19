@@ -7,6 +7,7 @@ interface TechButtonProps {
   icon?: React.ElementType;
   className?: string;
   variant?: "primary" | "secondary" | "ghost";
+  ariaLabel?: string;
 }
 
 const TechButton: React.FC<TechButtonProps> = ({
@@ -15,6 +16,7 @@ const TechButton: React.FC<TechButtonProps> = ({
   icon: Icon,
   className = "",
   variant = "primary",
+  ariaLabel,
 }) => {
   const baseStyles =
     "relative group flex items-center justify-center gap-2 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-300 overflow-hidden";
@@ -43,6 +45,7 @@ const TechButton: React.FC<TechButtonProps> = ({
       href={href}
       target="_blank"
       rel="noreferrer"
+      aria-label={ariaLabel || (typeof children === "string" ? children : undefined)}
       className={`${baseStyles} ${variants[variant]} ${className}`}
     >
       {/* Swipe Effect Background */}

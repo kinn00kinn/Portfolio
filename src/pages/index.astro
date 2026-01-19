@@ -16,10 +16,12 @@ const articles = await getZennArticles();
   description={profile.bio}
   image="/og-image.png"
 >
-  <PortfolioList
-    profile={profile}
-    repos={repos}
-    articles={articles}
-    client:load
-  />
+  <main>
+    <PortfolioList
+      profile={profile}
+      repos={repos}
+      articles={articles}
+      client:load
+    />
+  </main>
 </Layout>
