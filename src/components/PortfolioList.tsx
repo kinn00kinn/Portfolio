@@ -18,7 +18,7 @@ import {
   Terminal,
   Hash,
 } from "lucide-react";
-import { Tilt } from "react-tilt";
+import Tilt from "react-parallax-tilt";
 import TypewriterEffect from "./TypewriterEffect";
 import GlitchText from "./GlitchText";
 import CustomCursor from "./CustomCursor";
@@ -128,14 +128,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     "rounded-xl overflow-hidden " +
     "shadow-lg dark:shadow-[0_0_15px_rgba(0,0,0,0.5)] " +
     "transition-all duration-300 ";
-
-  const tiltOptions = {
-    max: 10,
-    scale: 1.02,
-    speed: 400,
-    glare: true,
-    "max-glare": 0.3,
-  };
 
   const monoText =
     "font-mono text-xs text-zinc-500 dark:text-zinc-400 tracking-wider";
@@ -248,7 +240,12 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             className="col-span-1 md:col-span-3 lg:col-span-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-12"
           >
             <Tilt
-              options={tiltOptions}
+              tiltMaxAngleX={10}
+              tiltMaxAngleY={10}
+              scale={1.02}
+              transitionSpeed={400}
+              glareEnable={true}
+              glareMaxOpacity={0.3}
               className={`${glassCardClass} md:col-span-2 lg:col-span-2 row-span-2 p-6 md:p-8 justify-between group`}
             >
               <div className={`absolute top-4 right-4 ${monoText}`}>
@@ -411,7 +408,16 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {repos.map((repo, i) => (
-                <Tilt key={repo.url} options={tiltOptions} className="h-full">
+                <Tilt
+                  key={repo.url}
+                  tiltMaxAngleX={10}
+                  tiltMaxAngleY={10}
+                  scale={1.02}
+                  transitionSpeed={400}
+                  glareEnable={true}
+                  glareMaxOpacity={0.3}
+                  className="h-full"
+                >
                   <div
                     className={`${glassCardClass} h-full p-6 group hover:border-zinc-400 dark:hover:border-zinc-500`}
                   >
@@ -511,7 +517,12 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   <div className="absolute -left-[41px] top-4 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 border-4 border-zinc-300 dark:border-zinc-700 group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-colors z-10"></div>
 
                   <Tilt
-                    options={{ ...tiltOptions, scale: 1.01 }}
+                    tiltMaxAngleX={10}
+                    tiltMaxAngleY={10}
+                    scale={1.01}
+                    transitionSpeed={400}
+                    glareEnable={true}
+                    glareMaxOpacity={0.3}
                     className="w-full"
                   >
                     <a
