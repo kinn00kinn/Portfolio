@@ -150,6 +150,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
       href={href}
       target="_blank"
       rel="noreferrer"
+      aria-label={`${label} Profile`}
       className={`group relative flex flex-col justify-between p-5 h-32 border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-black transition-all duration-300 overflow-hidden ${hoverColorClass}`}
     >
       {/* Background Hover Effect */}
@@ -188,9 +189,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
       <div
         className={`min-h-screen bg-zinc-100 dark:bg-[#050505] font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-300 relative overflow-hidden selection:bg-green-500/30 ${
-          isLoading
-            ? "opacity-0"
-            : "opacity-100 animate-in fade-in duration-1000"
+          isLoading ? "h-screen overflow-hidden" : ""
         }`}
       >
         <CustomCursor />
@@ -206,6 +205,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             <a
               key={item.id}
               href={`#${item.id}`}
+              aria-label={`Scroll to ${item.label}`}
               className={`group flex items-center gap-3 transition-all duration-300 ${
                 activeSection === item.id
                   ? "translate-x-2 text-zinc-900 dark:text-white"
@@ -268,6 +268,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
                   <button
                     onClick={toggleTheme}
+                    aria-label="Toggle Dark Mode"
                     className="p-3 rounded-full bg-white/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-all shadow-sm backdrop-blur-sm"
                   >
                     {isDark ? <Sun size={20} /> : <Moon size={20} />}
