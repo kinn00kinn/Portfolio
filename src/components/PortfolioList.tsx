@@ -73,19 +73,13 @@ const ProfileLink = ({ href, icon: Icon, label, value }: ProfileLinkItem) => {
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
       aria-label={`${label}: ${value}`}
-      className="group flex min-h-[92px] flex-1 flex-col justify-between border-t-2 border-zinc-200 p-4 outline-none transition-colors hover:bg-zinc-100 focus-visible:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:focus-visible:bg-zinc-900"
+      className="group flex min-h-[76px] flex-1 items-center gap-3 border-t-2 border-zinc-200 px-4 py-3 outline-none transition-colors hover:bg-zinc-100 focus-visible:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:focus-visible:bg-zinc-900"
     >
-      <span className="flex items-center justify-between text-zinc-500 dark:text-zinc-500">
-        <Icon size={16} />
-        {isExternal && (
-          <ExternalLink
-            size={14}
-            className="opacity-45 transition-opacity group-hover:opacity-80"
-          />
-        )}
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-zinc-200 text-zinc-500 transition-colors group-hover:border-zinc-900 group-hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:group-hover:border-zinc-500 dark:group-hover:text-zinc-100">
+        <Icon size={18} />
       </span>
-      <span className="mt-4 block break-all font-mono text-[15px] font-black leading-tight text-zinc-900 dark:text-zinc-100 md:text-base xl:text-lg">
-        {value}
+      <span className="font-mono text-sm font-black uppercase tracking-wider text-zinc-900 dark:text-zinc-100 md:text-base">
+        {label}
       </span>
     </a>
   );
