@@ -1,10 +1,9 @@
 // src/components/PortfolioList.tsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   User,
   Github,
   FolderCode,
-  FileText,
   ExternalLink,
   Mail,
   Sun,
@@ -16,17 +15,14 @@ import {
   Globe,
   Star,
   Terminal,
-  Hash,
+  Rss,
 } from "lucide-react";
-import Tilt from "react-parallax-tilt";
 import TypewriterEffect from "./TypewriterEffect";
-import GlitchText from "./GlitchText";
 import CustomCursor from "./CustomCursor";
 import InteractiveBackground from "./InteractiveBackground";
 import TechButton from "./TechButton";
 import LoadingScreen from "./LoadingScreen";
 
-// --- 型定義 ---
 interface Repository {
   name: string;
   description: string;
@@ -46,6 +42,13 @@ interface Article {
   likedCount?: number;
 }
 
+interface ProfileLinkItem {
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  compact?: boolean;
+}
+
 interface PortfolioListProps {
   profile: {
     name: string;
@@ -54,6 +57,7 @@ interface PortfolioListProps {
     githubUrl: string;
     email: string;
     avatarUrl: string;
+    blogUrl?: string;
     xUrl?: string;
     linkedinUrl?: string;
     zennUrl?: string;
@@ -62,6 +66,30 @@ interface PortfolioListProps {
   repos: Repository[];
   articles: Article[];
 }
+
+const ProfileLink = ({ href, icon: Icon, label, compact }: ProfileLinkItem) => {
+  const isExternal = !href.startsWith("mailto:");
+
+  return (
+    <a
+      href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noreferrer" : undefined}
+      className={`group inline-flex max-w-full items-center gap-2 border-b border-transparent py-1.5 font-bold text-zinc-700 transition-colors hover:border-zinc-500 hover:text-zinc-950 dark:text-zinc-300 dark:hover:border-zinc-400 dark:hover:text-white ${
+        compact ? "text-sm" : "text-base"
+      }`}
+    >
+      <Icon size={compact ? 16 : 18} className="shrink-0" />
+      <span className="truncate">{label}</span>
+      {isExternal && (
+        <ExternalLink
+          size={14}
+          className="opacity-50 transition-opacity group-hover:opacity-90"
+        />
+      )}
+    </a>
+  );
+};
 
 const PortfolioList: React.FC<PortfolioListProps> = ({
   profile,
@@ -119,69 +147,80 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     }
   };
 
-  // --- スタイル定義 ---
+  const visibleXUrl =
+    profile.xUrl && profile.xUrl !== "https://twitter.com/"
+      ? profile.xUrl
+      : undefined;
+
+  const contactLinks = useMemo(
+    () =>
+      [
+        {
+          href: `mailto:${profile.email}`,
+          icon: Mail,
+          label: profile.email,
+          compact: true,
+        },
+        {
+          href: profile.githubUrl,
+          icon: Github,
+          label: "GitHub",
+        },
+        profile.linkedinUrl
+          ? {
+              href: profile.linkedinUrl,
+              icon: Linkedin,
+              label: "LinkedIn",
+            }
+          : undefined,
+        visibleXUrl
+          ? {
+              href: visibleXUrl,
+              icon: Twitter,
+              label: "X",
+            }
+          : undefined,
+      ].filter(Boolean) as ProfileLinkItem[],
+    [profile.email, profile.githubUrl, profile.linkedinUrl, visibleXUrl]
+  );
+
+  const blogLinks = useMemo(
+    () =>
+      [
+        profile.blogUrl
+          ? {
+              href: profile.blogUrl,
+              icon: Rss,
+              label: "Blog",
+            }
+          : undefined,
+        profile.zennUrl
+          ? {
+              href: profile.zennUrl,
+              icon: BookOpen,
+              label: "Zenn",
+            }
+          : undefined,
+        profile.qiitaUrl
+          ? {
+              href: profile.qiitaUrl,
+              icon: Code2,
+              label: "Qiita",
+            }
+          : undefined,
+      ].filter(Boolean) as ProfileLinkItem[],
+    [profile.blogUrl, profile.zennUrl, profile.qiitaUrl]
+  );
 
   const glassCardClass =
     "relative flex flex-col " +
-    "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md " +
-    "border border-white/20 dark:border-zinc-700/50 " +
-    "rounded-xl overflow-hidden " +
-    "shadow-lg dark:shadow-[0_0_15px_rgba(0,0,0,0.5)] " +
-    "transition-all duration-300 ";
+    "bg-white/85 dark:bg-zinc-950/80 backdrop-blur-md " +
+    "border border-zinc-200 dark:border-zinc-800 " +
+    "rounded-lg overflow-hidden shadow-sm " +
+    "transition-colors duration-200";
 
   const monoText =
     "font-mono text-xs text-zinc-500 dark:text-zinc-400 tracking-wider";
-
-  // --- 新しいソーシャルカードコンポーネント ---
-  const SocialCard = ({
-    href,
-    icon: Icon,
-    label,
-    id,
-    hoverColorClass, // ホバー時の色 (border & text)
-  }: {
-    href: string;
-    icon: React.ElementType;
-    label: string;
-    id: string;
-    hoverColorClass: string;
-  }) => (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`${label} Profile`}
-      className={`group relative flex flex-col justify-between p-5 h-32 border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-black transition-all duration-300 overflow-hidden ${hoverColorClass}`}
-    >
-      {/* Background Hover Effect */}
-      <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left -z-0" />
-
-      {/* Header: ID */}
-      <div className="flex justify-between items-start relative z-10">
-        <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-600 group-hover:text-current transition-colors opacity-70">
-          [{id}]
-        </span>
-        <ExternalLink
-          size={14}
-          className="text-zinc-300 dark:text-zinc-700 group-hover:text-current transition-colors opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 duration-300"
-        />
-      </div>
-
-      {/* Content: Icon & Label */}
-      <div className="flex flex-col gap-2 relative z-10 mt-auto">
-        <Icon
-          size={24}
-          className="text-zinc-600 dark:text-zinc-400 group-hover:text-current transition-colors duration-300"
-        />
-        <span className="font-black text-xl md:text-2xl uppercase tracking-tighter text-zinc-700 dark:text-zinc-300 group-hover:text-current transition-colors duration-300">
-          {label}
-        </span>
-      </div>
-
-      {/* Decorative Corner (Bottom Right) */}
-      <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-zinc-300 dark:border-zinc-700 group-hover:border-current transition-colors duration-300 opacity-50" />
-    </a>
-  );
 
   return (
     <>
@@ -195,36 +234,37 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         <CustomCursor />
         <InteractiveBackground />
 
-        {/* --- Sticky Navigation (Desktop) --- */}
         <div className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col gap-6 z-50">
           {[
             { id: "profile", icon: User, label: "PROFILE" },
             { id: "projects", icon: FolderCode, label: "PROJECTS" },
-            { id: "logs", icon: BookOpen, label: "LOGS" },
+            { id: "logs", icon: BookOpen, label: "BLOG" },
           ].map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
               aria-label={`Scroll to ${item.label}`}
-              className={`group flex items-center gap-3 transition-all duration-300 ${
+              className={`group flex items-center gap-3 transition-colors duration-200 ${
                 activeSection === item.id
-                  ? "translate-x-2 text-zinc-900 dark:text-white"
+                  ? "text-zinc-900 dark:text-white"
                   : "text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400"
               }`}
             >
               <div
-                className={`p-2 rounded-lg transition-all duration-300 ${
+                className={`p-2 rounded-lg transition-colors duration-200 ${
                   activeSection === item.id
-                    ? "bg-white dark:bg-zinc-800 shadow-md scale-110"
+                    ? "bg-white dark:bg-zinc-800 shadow-sm"
                     : "bg-transparent"
                 }`}
               >
                 <item.icon size={20} />
               </div>
               <span
-                className={`font-mono text-xs font-bold tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                  activeSection === item.id ? "opacity-100" : ""
-                }`}
+                className={`font-mono text-xs font-bold tracking-widest ${
+                  activeSection === item.id
+                    ? "opacity-100"
+                    : "opacity-0 group-hover:opacity-100"
+                } transition-opacity duration-200`}
               >
                 {item.label}
               </span>
@@ -232,58 +272,46 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           ))}
         </div>
 
-        {/* --- Main Content --- */}
-        <div className="relative z-10 max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:pl-24">
-          {/* 1. Profile Hero Card */}
-          <div
+        <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-6 p-4 md:p-8 lg:pl-24">
+          <section
             id="profile"
-            className="col-span-1 md:col-span-3 lg:col-span-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-12"
+            className="relative border-b border-dashed border-zinc-300 py-14 dark:border-zinc-800 md:py-20"
           >
-            <Tilt
-              tiltMaxAngleX={10}
-              tiltMaxAngleY={10}
-              scale={1.02}
-              transitionSpeed={400}
-              glareEnable={true}
-              glareMaxOpacity={0.3}
-              className={`${glassCardClass} md:col-span-2 lg:col-span-2 row-span-2 p-6 md:p-8 justify-between group`}
-            >
-              <div className={`absolute top-4 right-4 ${monoText}`}>
-                // 001_MAIN
-              </div>
+            <div className="mb-10 flex items-center justify-between gap-4">
+              <div className={monoText}>// PROFILE</div>
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle Dark Mode"
+                className="shrink-0 rounded-full border border-zinc-200 bg-white/60 p-3 shadow-sm backdrop-blur-sm transition-colors hover:border-zinc-400 hover:bg-white dark:border-zinc-800 dark:bg-zinc-950/70 dark:hover:border-zinc-600 dark:hover:bg-zinc-900"
+              >
+                {isDark ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+            </div>
 
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
               <div>
-                <div className="flex justify-between items-start mb-6">
-                  <div className="relative">
-                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full p-1 bg-gradient-to-br from-zinc-200 to-zinc-400 dark:from-zinc-700 dark:to-zinc-900">
-                      <img
-                        src={profile.avatarUrl}
-                        alt={`${profile.name} avatar`}
-                        className="w-full h-full rounded-full object-cover bg-white"
-                      />
-                    </div>
-                    {/* Neon Status Indicator */}
-                    <div className="absolute -bottom-1 -right-1 bg-[#00ff41] w-5 h-5 rounded-full border-2 border-white dark:border-zinc-900 animate-pulse z-10 shadow-[0_0_10px_#00ff41]"></div>
+                <div className="mb-8 flex items-center gap-6">
+                  <div className="relative h-24 w-24 shrink-0 rounded-full border border-zinc-200 bg-white p-1 dark:border-zinc-800 dark:bg-black md:h-28 md:w-28">
+                    <img
+                      src={profile.avatarUrl}
+                      alt={`${profile.name} avatar`}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                    <div className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-white bg-[#00ff41] shadow-[0_0_8px_#00ff41] dark:border-zinc-950" />
                   </div>
 
-                  <button
-                    onClick={toggleTheme}
-                    aria-label="Toggle Dark Mode"
-                    className="p-3 rounded-full bg-white/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-all shadow-sm backdrop-blur-sm"
-                  >
-                    {isDark ? <Sun size={20} /> : <Moon size={20} />}
-                  </button>
+                  <div className="min-w-0">
+                    <div className={`mb-2 ${monoText}`}>
+                      &lt;Role type="admin" /&gt;
+                    </div>
+                    <h1 className="truncate text-5xl font-black tracking-tight text-zinc-900 dark:text-white md:text-7xl">
+                      {profile.name}
+                    </h1>
+                  </div>
                 </div>
 
-                <div className={`mb-1 ${monoText}`}>
-                  &lt;Role type="admin" /&gt;
-                </div>
-                <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-3 text-zinc-900 dark:text-white">
-                  <GlitchText text={profile.name} />
-                </h1>
-
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-zinc-900 text-white dark:bg-white dark:text-black rounded-full text-sm font-bold mb-5 font-mono shadow-[0_0_15px_rgba(0,0,0,0.2)] dark:shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-                  <Terminal size={14} />
+                <div className="mb-7 flex items-center gap-2 font-mono text-base font-bold text-zinc-700 dark:text-zinc-300">
+                  <Terminal size={16} />
                   {!isLoading && (
                     <TypewriterEffect
                       text={profile.role}
@@ -292,7 +320,8 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     />
                   )}
                 </div>
-                <p className="text-base md:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300 font-medium border-l-2 border-zinc-300 dark:border-zinc-700 pl-4">
+
+                <p className="max-w-3xl text-xl font-medium leading-relaxed text-zinc-700 dark:text-zinc-300 md:text-2xl">
                   {!isLoading && (
                     <TypewriterEffect
                       text={profile.bio}
@@ -304,100 +333,40 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                 </p>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-dashed border-zinc-300 dark:border-zinc-700">
-                <div className={`flex items-center gap-2 mb-3 ${monoText}`}>
-                  <Hash size={12} />
-                  <span>INTERESTS_ARRAY</span>
+              <aside className="border-t border-zinc-300 pt-6 dark:border-zinc-800 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+                <div className="grid gap-7 sm:grid-cols-2 sm:gap-x-10 lg:gap-x-8">
+                  <div>
+                    <div className={`mb-3 ${monoText}`}>CONTACT</div>
+                    <div className="flex flex-col items-start gap-2">
+                      {contactLinks.map((link) => (
+                        <ProfileLink
+                          key={`${link.label}-${link.href}`}
+                          {...link}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className={`mb-3 ${monoText}`}>BLOG</div>
+                    <div className="flex flex-col items-start gap-2">
+                      {blogLinks.map((link) => (
+                        <ProfileLink
+                          key={`${link.label}-${link.href}`}
+                          {...link}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {["Web_Dev", "Infra", "Astro", "React", "CFD"].map(
-                    (tag, i) => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 bg-zinc-100/50 dark:bg-zinc-800/50 text-xs font-bold rounded border border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 font-mono hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-default"
-                      >
-                        {i.toString().padStart(2, "0")}_{tag}
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
-            </Tilt>
-
-            {/* Social Links Grid - Updated for High Visibility & Brand Colors */}
-            <div className="md:col-span-1 lg:col-span-2 grid grid-cols-2 gap-3 content-start">
-              <SocialCard
-                href={profile.githubUrl}
-                icon={Github}
-                label="GitHub"
-                id="LNK_01"
-                // GitHub: モノクロ (黒/白)
-                hoverColorClass="hover:border-zinc-900 dark:hover:border-white hover:text-zinc-900 dark:hover:text-white"
-              />
-
-              {profile.xUrl && (
-                <SocialCard
-                  href={profile.xUrl}
-                  icon={Twitter}
-                  label="Twitter"
-                  id="LNK_02"
-                  // X (Twitter): 青 (または黒)
-                  hoverColorClass="hover:border-sky-500 hover:text-sky-500"
-                />
-              )}
-
-              {profile.zennUrl && (
-                <SocialCard
-                  href={profile.zennUrl}
-                  icon={FileText}
-                  label="Zenn"
-                  id="LNK_03"
-                  // Zenn: 水色 (#3EA8FF)
-                  hoverColorClass="hover:border-[#3EA8FF] hover:text-[#3EA8FF]"
-                />
-              )}
-
-              {profile.qiitaUrl && (
-                <SocialCard
-                  href={profile.qiitaUrl}
-                  icon={Code2}
-                  label="Qiita"
-                  id="LNK_04"
-                  // Qiita: 緑 (#55C500)
-                  hoverColorClass="hover:border-[#55C500] hover:text-[#55C500]"
-                />
-              )}
-
-              {profile.linkedinUrl && (
-                <SocialCard
-                  href={profile.linkedinUrl}
-                  icon={Linkedin}
-                  label="LinkedIn"
-                  id="LNK_05"
-                  // LinkedIn: 青 (#0077B5)
-                  hoverColorClass="hover:border-[#0077B5] hover:text-[#0077B5]"
-                />
-              )}
-
-              <SocialCard
-                href={`mailto:${profile.email}`}
-                icon={Mail}
-                label="Email"
-                id="LNK_06"
-                // Email: オレンジ/赤 (Gmail的な色)
-                hoverColorClass="hover:border-[#EA4335] hover:text-[#EA4335]"
-              />
+              </aside>
             </div>
-          </div>
+          </section>
 
-          {/* 2. Projects Section */}
-          <div
-            id="projects"
-            className="col-span-1 md:col-span-3 lg:col-span-4 mb-12"
-          >
-            <div className="flex items-end justify-between border-b border-zinc-300 dark:border-zinc-700 pb-4 mb-6">
+          <section id="projects" className="mb-8">
+            <div className="mb-6 flex items-end justify-between border-b border-zinc-300 pb-4 dark:border-zinc-700">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded shadow-[0_0_10px_rgba(0,0,0,0.2)] dark:shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-white dark:text-black">
                   <FolderCode size={20} />
                 </div>
                 <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-white">
@@ -407,176 +376,145 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               <span className={`${monoText} font-bold`}>:: SECTION_02</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {repos.map((repo, i) => (
-                <Tilt
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {repos.slice(0, 3).map((repo, i) => (
+                <article
                   key={repo.url}
-                  tiltMaxAngleX={10}
-                  tiltMaxAngleY={10}
-                  scale={1.02}
-                  transitionSpeed={400}
-                  glareEnable={true}
-                  glareMaxOpacity={0.3}
-                  className="h-full"
+                  className={`${glassCardClass} h-full p-6 hover:border-zinc-400 dark:hover:border-zinc-600`}
                 >
-                  <div
-                    className={`${glassCardClass} h-full p-6 group hover:border-zinc-400 dark:hover:border-zinc-500`}
-                  >
-                    {/* Header */}
-                    <div className="flex justify-between items-start mb-4">
-                      <span className={`${monoText}`}>
-                        // PROJ_{String(i + 1).padStart(2, "0")}
+                  <div className="mb-4 flex items-start justify-between">
+                    <span className={monoText}>
+                      // PROJ_{String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div className="flex items-center gap-1 rounded border border-zinc-200 bg-zinc-100 px-2 py-1 font-mono text-xs font-bold dark:border-zinc-700 dark:bg-zinc-900">
+                      <Star
+                        size={12}
+                        className="fill-yellow-400 text-yellow-400"
+                      />
+                      <span className="text-zinc-700 dark:text-zinc-200">
+                        {repo.stargazerCount}
                       </span>
-                      <div className="flex items-center gap-1 text-xs font-bold bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded font-mono border border-zinc-200 dark:border-zinc-700">
-                        <Star
-                          size={12}
-                          className="fill-yellow-400 text-yellow-400"
-                        />
-                        <span className="text-zinc-700 dark:text-zinc-200">
-                          {repo.stargazerCount}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-grow">
-                      <h3 className="text-xl font-bold mb-2 line-clamp-1 text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        <GlitchText text={repo.name} />
-                      </h3>
-                      <p className="text-sm text-zinc-600 dark:text-zinc-300 mb-6 line-clamp-3 leading-relaxed font-medium">
-                        {repo.description || "No description provided."}
-                      </p>
-                    </div>
-
-                    {/* Footer Info */}
-                    <div className="flex items-center justify-between mb-4 pt-4 border-t border-dashed border-zinc-200 dark:border-zinc-700">
-                      {repo.primaryLanguage ? (
-                        <div className="flex items-center gap-2 text-xs font-bold font-mono text-zinc-500 dark:text-zinc-400">
-                          <span
-                            className="w-3 h-3 rounded-full shadow-[0_0_5px_currentColor]"
-                            style={{
-                              backgroundColor: repo.primaryLanguage.color,
-                              color: repo.primaryLanguage.color,
-                            }}
-                          ></span>
-                          {repo.primaryLanguage.name.toUpperCase()}
-                        </div>
-                      ) : (
-                        <span></span>
-                      )}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-3 mt-auto">
-                      <TechButton
-                        href={repo.url}
-                        icon={Github}
-                        variant="secondary"
-                      >
-                        CODE
-                      </TechButton>
-
-                      {repo.homepageUrl ? (
-                        <TechButton
-                          href={repo.homepageUrl}
-                          icon={Globe}
-                          variant="primary"
-                        >
-                          DEMO
-                        </TechButton>
-                      ) : (
-                        <div className="flex items-center justify-center gap-2 py-2 px-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-600 text-xs font-bold rounded border border-zinc-200 dark:border-zinc-700 cursor-not-allowed">
-                          <Globe size={14} />
-                          DEMO
-                        </div>
-                      )}
                     </div>
                   </div>
-                </Tilt>
+
+                  <div className="flex-grow">
+                    <h3 className="mb-2 line-clamp-1 text-xl font-bold text-zinc-900 transition-colors hover:text-blue-600 dark:text-white dark:hover:text-blue-400">
+                      {repo.name}
+                    </h3>
+                    <p className="mb-6 line-clamp-3 text-sm font-medium leading-relaxed text-zinc-600 dark:text-zinc-300">
+                      {repo.description || "No description provided."}
+                    </p>
+                  </div>
+
+                  <div className="mb-4 flex items-center justify-between border-t border-dashed border-zinc-200 pt-4 dark:border-zinc-700">
+                    {repo.primaryLanguage ? (
+                      <div className="flex items-center gap-2 font-mono text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                        <span
+                          className="h-3 w-3 rounded-full shadow-[0_0_5px_currentColor]"
+                          style={{
+                            backgroundColor: repo.primaryLanguage.color,
+                            color: repo.primaryLanguage.color,
+                          }}
+                        />
+                        {repo.primaryLanguage.name.toUpperCase()}
+                      </div>
+                    ) : (
+                      <span />
+                    )}
+                  </div>
+
+                  <div className="mt-auto grid grid-cols-2 gap-3">
+                    <TechButton
+                      href={repo.url}
+                      icon={Github}
+                      variant="secondary"
+                    >
+                      CODE
+                    </TechButton>
+
+                    {repo.homepageUrl ? (
+                      <TechButton
+                        href={repo.homepageUrl}
+                        icon={Globe}
+                        variant="primary"
+                      >
+                        DEMO
+                      </TechButton>
+                    ) : (
+                      <div className="flex items-center justify-center gap-2 rounded-md border border-zinc-200 bg-white/50 px-3 py-2 font-mono text-xs font-bold text-zinc-400 dark:border-zinc-800 dark:bg-black/20 dark:text-zinc-600">
+                        <Globe size={14} />
+                        DEMO
+                      </div>
+                    )}
+                  </div>
+                </article>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* 3. Articles Section (Timeline Layout) */}
-          <div id="logs" className="col-span-1 md:col-span-3 lg:col-span-4">
-            <div className="flex items-end justify-between border-b border-zinc-300 dark:border-zinc-700 pb-4 mb-8">
+          <section id="logs">
+            <div className="mb-8 flex items-end justify-between border-b border-zinc-300 pb-4 dark:border-zinc-700">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded shadow-[0_0_10px_rgba(0,0,0,0.2)] dark:shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-white dark:text-black">
                   <BookOpen size={20} />
                 </div>
                 <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-white">
-                  Latest Logs
+                  Latest Blog
                 </h2>
               </div>
               <span className={`${monoText} font-bold`}>:: SECTION_03</span>
             </div>
 
-            <div className="relative pl-8 border-l-2 border-zinc-200 dark:border-zinc-800 space-y-8">
+            <div className="relative space-y-5 border-l-2 border-zinc-200 pl-8 dark:border-zinc-800">
               {articles.map((article, i) => (
-                <div key={article.link} className="relative group">
-                  {/* Timeline Dot */}
-                  <div className="absolute -left-[41px] top-4 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 border-4 border-zinc-300 dark:border-zinc-700 group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-colors z-10"></div>
-
-                  <Tilt
-                    tiltMaxAngleX={10}
-                    tiltMaxAngleY={10}
-                    scale={1.01}
-                    transitionSpeed={400}
-                    glareEnable={true}
-                    glareMaxOpacity={0.3}
-                    className="w-full"
-                  >
-                    <a
-                      href={article.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${glassCardClass} block p-6 hover:border-blue-500/50 dark:hover:border-blue-400/50 group/card`}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                          <div
-                            className={`flex items-center gap-3 mb-2 opacity-70 ${monoText}`}
-                          >
-                            <span className="bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-[10px]">
-                              LOG_{String(i + 1).padStart(3, "0")}
-                            </span>
-                            <span>{article.pubDate.replace(/-/g, ".")}</span>
-                          </div>
-                          <h3 className="font-bold text-lg md:text-xl text-zinc-900 dark:text-white group-hover/card:text-blue-600 dark:group-hover/card:text-blue-400 transition-colors">
-                            {article.title}
-                          </h3>
-                        </div>
-
-                        <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
-                          <span className="group-hover/card:translate-x-1 transition-transform">
-                            Read Article
-                          </span>
-                          <ExternalLink size={14} />
-                        </div>
+                <a
+                  key={article.link}
+                  href={article.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${glassCardClass} block p-5 hover:border-blue-500/50 dark:hover:border-blue-400/50`}
+                >
+                  <div className="absolute -left-[10px] mt-1 h-4 w-4 rounded-full border-4 border-zinc-300 bg-zinc-100 transition-colors dark:border-zinc-700 dark:bg-zinc-950" />
+                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                    <div>
+                      <div
+                        className={`mb-2 flex items-center gap-3 opacity-70 ${monoText}`}
+                      >
+                        <span className="rounded bg-zinc-100 px-2 py-0.5 text-[10px] dark:bg-zinc-900">
+                          LOG_{String(i + 1).padStart(3, "0")}
+                        </span>
+                        <span>{article.pubDate.replace(/-/g, ".")}</span>
                       </div>
-                    </a>
-                  </Tilt>
-                </div>
+                      <h3 className="text-lg font-bold text-zinc-900 transition-colors hover:text-blue-600 dark:text-white dark:hover:text-blue-400 md:text-xl">
+                        {article.title}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-center gap-2 whitespace-nowrap text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                      <span>Read Article</span>
+                      <ExternalLink size={14} />
+                    </div>
+                  </div>
+                </a>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Footer */}
-          <footer className="col-span-1 md:col-span-3 lg:col-span-4 py-12 text-center relative z-10 mt-12">
+          <footer className="relative z-10 mt-12 py-12 text-center">
             <div
-              className={`inline-block border-t border-dashed border-zinc-300 dark:border-zinc-700 pt-6 px-8 ${monoText}`}
+              className={`inline-block border-t border-dashed border-zinc-300 px-8 pt-6 dark:border-zinc-700 ${monoText}`}
             >
               <p className="mb-2 flex items-center justify-center gap-2">
-                SYSTEM_STATUS:{" "}
+                SYSTEM_STATUS:
                 <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
                 </span>
-                <span className="text-green-600 dark:text-green-400 font-bold">
+                <span className="font-bold text-green-600 dark:text-green-400">
                   ONLINE
                 </span>
               </p>
-              <p className="opacity-80 text-zinc-600 dark:text-zinc-400">
+              <p className="text-zinc-600 opacity-80 dark:text-zinc-400">
                 © {new Date().getFullYear()} {profile.name}. ALL RIGHTS
                 RESERVED.
               </p>
