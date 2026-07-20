@@ -46,7 +46,7 @@ interface ProfileLinkItem {
   href: string;
   icon: React.ElementType;
   label: string;
-  compact?: boolean;
+  value: string;
 }
 
 interface PortfolioListProps {
@@ -67,7 +67,7 @@ interface PortfolioListProps {
   articles: Article[];
 }
 
-const ProfileLink = ({ href, icon: Icon, label, compact }: ProfileLinkItem) => {
+const ProfileLink = ({ href, icon: Icon, label, value }: ProfileLinkItem) => {
   const isExternal = !href.startsWith("mailto:");
 
   return (
@@ -75,18 +75,22 @@ const ProfileLink = ({ href, icon: Icon, label, compact }: ProfileLinkItem) => {
       href={href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className={`group inline-flex max-w-full items-center gap-2 border-b border-transparent py-1.5 font-bold text-zinc-700 transition-colors hover:border-zinc-500 hover:text-zinc-950 dark:text-zinc-300 dark:hover:border-zinc-400 dark:hover:text-white ${
-        compact ? "text-sm" : "text-base"
-      }`}
+      aria-label={`${label}: ${value}`}
+      className="group block border-b border-zinc-200/80 py-3 transition-colors hover:border-zinc-500 dark:border-zinc-800 dark:hover:border-zinc-400"
     >
-      <Icon size={compact ? 16 : 18} className="shrink-0" />
-      <span className="truncate">{label}</span>
-      {isExternal && (
-        <ExternalLink
-          size={14}
-          className="opacity-50 transition-opacity group-hover:opacity-90"
-        />
-      )}
+      <span className="mb-1 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+        <Icon size={14} />
+        <span>{label}</span>
+        {isExternal && (
+          <ExternalLink
+            size={13}
+            className="opacity-45 transition-opacity group-hover:opacity-90"
+          />
+        )}
+      </span>
+      <span className="block break-all font-mono text-lg font-bold text-zinc-800 transition-colors group-hover:text-zinc-950 dark:text-zinc-200 dark:group-hover:text-white md:text-xl">
+        {value}
+      </span>
     </a>
   );
 };
@@ -158,19 +162,21 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         {
           href: `mailto:${profile.email}`,
           icon: Mail,
-          label: profile.email,
-          compact: true,
+          label: "Mail",
+          value: profile.email,
         },
         {
           href: profile.githubUrl,
           icon: Github,
           label: "GitHub",
+          value: "github.com/kinn00kinn",
         },
         profile.linkedinUrl
           ? {
               href: profile.linkedinUrl,
               icon: Linkedin,
               label: "LinkedIn",
+              value: "linkedin.com/in/haruki00nakamura",
             }
           : undefined,
         visibleXUrl
@@ -178,6 +184,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               href: visibleXUrl,
               icon: Twitter,
               label: "X",
+              value: visibleXUrl.replace(/^https?:\/\/(www\.)?/, ""),
             }
           : undefined,
       ].filter(Boolean) as ProfileLinkItem[],
@@ -192,6 +199,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               href: profile.blogUrl,
               icon: Rss,
               label: "Blog",
+              value: "blog.kinn-kinn.com",
             }
           : undefined,
         profile.zennUrl
@@ -199,6 +207,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               href: profile.zennUrl,
               icon: BookOpen,
               label: "Zenn",
+              value: "zenn.dev/kinnkinn",
             }
           : undefined,
         profile.qiitaUrl
@@ -206,6 +215,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               href: profile.qiitaUrl,
               icon: Code2,
               label: "Qiita",
+              value: "qiita.com/kinn00kinn",
             }
           : undefined,
       ].filter(Boolean) as ProfileLinkItem[],
@@ -275,9 +285,9 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-6 p-4 md:p-8 lg:pl-24">
           <section
             id="profile"
-            className="relative border-b border-dashed border-zinc-300 py-14 dark:border-zinc-800 md:py-20"
+            className="relative border-b border-dashed border-zinc-300 py-12 dark:border-zinc-800 md:py-16"
           >
-            <div className="mb-10 flex items-center justify-between gap-4">
+            <div className="mb-8 flex items-center justify-between gap-4">
               <div className={monoText}>// PROFILE</div>
               <button
                 onClick={toggleTheme}
@@ -288,56 +298,58 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               </button>
             </div>
 
-            <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
-              <div>
-                <div className="mb-8 flex items-center gap-6">
-                  <div className="relative h-24 w-24 shrink-0 rounded-full border border-zinc-200 bg-white p-1 dark:border-zinc-800 dark:bg-black md:h-28 md:w-28">
-                    <img
-                      src={profile.avatarUrl}
-                      alt={`${profile.name} avatar`}
-                      className="h-full w-full rounded-full object-cover"
-                    />
-                    <div className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-white bg-[#00ff41] shadow-[0_0_8px_#00ff41] dark:border-zinc-950" />
-                  </div>
-
-                  <div className="min-w-0">
-                    <div className={`mb-2 ${monoText}`}>
-                      &lt;Role type="admin" /&gt;
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.85fr)] lg:items-start">
+              <div className="border-y border-dashed border-zinc-300 py-8 dark:border-zinc-800">
+                <div>
+                  <div className="mb-8 flex items-center gap-6">
+                    <div className="relative h-24 w-24 shrink-0 rounded-full border border-zinc-200 bg-white p-1 dark:border-zinc-800 dark:bg-black md:h-28 md:w-28">
+                      <img
+                        src={profile.avatarUrl}
+                        alt={`${profile.name} avatar`}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                      <div className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-white bg-[#00ff41] shadow-[0_0_8px_#00ff41] dark:border-zinc-950" />
                     </div>
-                    <h1 className="truncate text-5xl font-black tracking-tight text-zinc-900 dark:text-white md:text-7xl">
-                      {profile.name}
-                    </h1>
+
+                    <div className="min-w-0">
+                      <div className={`mb-2 ${monoText}`}>
+                        &lt;Role type="admin" /&gt;
+                      </div>
+                      <h1 className="truncate text-5xl font-black tracking-tight text-zinc-900 dark:text-white md:text-6xl xl:text-7xl">
+                        {profile.name}
+                      </h1>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mb-7 flex items-center gap-2 font-mono text-base font-bold text-zinc-700 dark:text-zinc-300">
-                  <Terminal size={16} />
-                  {!isLoading && (
-                    <TypewriterEffect
-                      text={profile.role}
-                      speed={50}
-                      startDelay={500}
-                    />
-                  )}
-                </div>
+                  <div className="mb-6 flex items-center gap-2 font-mono text-base font-bold text-zinc-700 dark:text-zinc-300">
+                    <Terminal size={16} />
+                    {!isLoading && (
+                      <TypewriterEffect
+                        text={profile.role}
+                        speed={50}
+                        startDelay={500}
+                      />
+                    )}
+                  </div>
 
-                <p className="max-w-3xl text-xl font-medium leading-relaxed text-zinc-700 dark:text-zinc-300 md:text-2xl">
-                  {!isLoading && (
-                    <TypewriterEffect
-                      text={profile.bio}
-                      speed={30}
-                      startDelay={1500}
-                      cursor={false}
-                    />
-                  )}
-                </p>
+                  <p className="max-w-3xl text-lg font-medium leading-relaxed text-zinc-700 dark:text-zinc-300 md:text-xl">
+                    {!isLoading && (
+                      <TypewriterEffect
+                        text={profile.bio}
+                        speed={30}
+                        startDelay={1500}
+                        cursor={false}
+                      />
+                    )}
+                  </p>
+                </div>
               </div>
 
-              <aside className="border-t border-zinc-300 pt-6 dark:border-zinc-800 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-                <div className="grid gap-7 sm:grid-cols-2 sm:gap-x-10 lg:gap-x-8">
+              <aside className="rounded-lg border border-zinc-200/80 bg-white/45 p-6 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/50 md:p-7">
+                <div className="space-y-7">
                   <div>
                     <div className={`mb-3 ${monoText}`}>CONTACT</div>
-                    <div className="flex flex-col items-start gap-2">
+                    <div className="space-y-1">
                       {contactLinks.map((link) => (
                         <ProfileLink
                           key={`${link.label}-${link.href}`}
@@ -347,9 +359,9 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     </div>
                   </div>
 
-                  <div>
+                  <div className="border-t border-dashed border-zinc-300 pt-5 dark:border-zinc-800">
                     <div className={`mb-3 ${monoText}`}>BLOG</div>
-                    <div className="flex flex-col items-start gap-2">
+                    <div className="space-y-1">
                       {blogLinks.map((link) => (
                         <ProfileLink
                           key={`${link.label}-${link.href}`}
