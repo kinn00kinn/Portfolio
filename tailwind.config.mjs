@@ -4,7 +4,22 @@ export default {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
   darkMode: "class", // ダークモードを有効化
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: [
+          '"Noto Sans JP"',
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        mono: [
+          '"SFMono-Regular"',
+          "Consolas",
+          '"Liberation Mono"',
+          "monospace",
+        ],
+      },
+    },
   },
   plugins: [],
 };

@@ -17,7 +17,6 @@ import {
   Rss,
 } from "lucide-react";
 import TechButton from "./TechButton";
-import LoadingScreen from "./LoadingScreen";
 
 interface Repository {
   name: string;
@@ -43,6 +42,8 @@ interface ProfileLinkItem {
   icon: React.ElementType;
   label: string;
   value: string;
+  displayText?: string;
+  featured?: boolean;
 }
 
 interface PortfolioListProps {
@@ -64,7 +65,14 @@ interface PortfolioListProps {
   articles: Article[];
 }
 
-const ProfileLink = ({ href, icon: Icon, label, value }: ProfileLinkItem) => {
+const ProfileLink = ({
+  href,
+  icon: Icon,
+  label,
+  value,
+  displayText,
+  featured,
+}: ProfileLinkItem) => {
   const isExternal = !href.startsWith("mailto:");
 
   return (
@@ -73,13 +81,36 @@ const ProfileLink = ({ href, icon: Icon, label, value }: ProfileLinkItem) => {
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
       aria-label={`${label}: ${value}`}
-      className="group flex min-h-[76px] flex-1 items-center gap-3 border-t-2 border-zinc-200 px-4 py-3 outline-none transition-colors hover:bg-zinc-100 focus-visible:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:focus-visible:bg-zinc-900"
+      className={`group flex min-h-[76px] flex-1 items-center gap-3 border-t-2 px-4 py-3 outline-none transition-colors ${
+        featured
+          ? "border-emerald-200 bg-emerald-50 hover:bg-emerald-100 focus-visible:bg-emerald-100 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/55 dark:focus-visible:bg-emerald-950/55"
+          : "border-zinc-200 hover:bg-zinc-100 focus-visible:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:focus-visible:bg-zinc-900"
+      }`}
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-zinc-200 text-zinc-500 transition-colors group-hover:border-zinc-900 group-hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:group-hover:border-zinc-500 dark:group-hover:text-zinc-100">
+      <span
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors ${
+          featured
+            ? "border-emerald-300 bg-white text-emerald-700 group-hover:border-emerald-800 group-hover:text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:group-hover:border-emerald-400 dark:group-hover:text-emerald-100"
+            : "border-zinc-200 text-zinc-500 group-hover:border-zinc-900 group-hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-500 dark:group-hover:border-zinc-500 dark:group-hover:text-zinc-100"
+        }`}
+      >
         <Icon size={18} />
       </span>
-      <span className="font-mono text-sm font-black uppercase tracking-wider text-zinc-900 dark:text-zinc-100 md:text-base">
-        {label}
+      <span
+        className={`min-w-0 font-mono ${
+          featured
+            ? "text-emerald-900 dark:text-emerald-100"
+            : "text-zinc-900 dark:text-zinc-100"
+        }`}
+      >
+        <span className="block text-sm font-black uppercase tracking-wider md:text-base">
+          {label}
+        </span>
+        {displayText && (
+          <span className="mt-1 block break-all text-[11px] font-bold leading-tight tracking-normal text-zinc-500 dark:text-zinc-400 md:text-xs">
+            {displayText}
+          </span>
+        )}
       </span>
     </a>
   );
@@ -88,6 +119,43 @@ const ProfileLink = ({ href, icon: Icon, label, value }: ProfileLinkItem) => {
 const formatDisplayUrl = (url: string) =>
   url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
 
+const formatEmailDisplay = (email: string) => email.replace(/@/g, "[at]");
+
+const ThemeToggleButton = ({
+  isDark,
+  onClick,
+  compact = false,
+}: {
+  isDark: boolean;
+  onClick: () => void;
+  compact?: boolean;
+}) => (
+  <button
+    onClick={onClick}
+    aria-label="Toggle Dark Mode"
+    className={`group z-50 flex items-center gap-3 text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-white ${
+      compact
+        ? "fixed left-4 top-4 h-11 w-11 justify-center rounded-full border-2 border-zinc-900 bg-white shadow-[3px_3px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a] lg:hidden"
+        : ""
+    }`}
+  >
+    <span
+      className={`flex items-center justify-center transition-colors ${
+        compact
+          ? ""
+          : "rounded-lg border border-zinc-200 bg-white p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
+      }`}
+    >
+      {isDark ? <Sun size={20} /> : <Moon size={20} />}
+    </span>
+    {!compact && (
+      <span className="font-mono text-xs font-bold uppercase tracking-widest opacity-0 transition-opacity group-hover:opacity-100">
+        {isDark ? "Light" : "Dark"}
+      </span>
+    )}
+  </button>
+);
+
 const PortfolioList: React.FC<PortfolioListProps> = ({
   profile,
   repos,
@@ -95,11 +163,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 }) => {
   const [isDark, setIsDark] = useState(false);
   const [activeSection, setActiveSection] = useState("profile");
-  const [isLoading, setIsLoading] = useState(true);
-
-  const handleLoadComplete = React.useCallback(() => {
-    setIsLoading(false);
-  }, []);
 
   useEffect(() => {
     if (
@@ -157,6 +220,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           icon: Mail,
           label: "Email",
           value: profile.email,
+          displayText: formatEmailDisplay(profile.email),
         },
         {
           href: profile.githubUrl,
@@ -193,6 +257,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               icon: Rss,
               label: "Blog",
               value: formatDisplayUrl(profile.blogUrl),
+              featured: true,
             }
           : undefined,
         profile.zennUrl
@@ -235,14 +300,12 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
   return (
     <>
-      {isLoading && <LoadingScreen onComplete={handleLoadComplete} />}
-
       <div
-        className={`min-h-screen bg-zinc-100 dark:bg-[#050505] font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-300 relative overflow-hidden selection:bg-green-500/30 ${
-          isLoading ? "h-screen overflow-hidden" : ""
-        }`}
+        className="relative min-h-screen overflow-hidden bg-[#f4f2ee] font-sans text-zinc-900 transition-colors duration-300 selection:bg-emerald-300/40 dark:bg-[#070707] dark:text-zinc-100"
       >
-        <div className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col gap-6 z-50">
+        <ThemeToggleButton isDark={isDark} onClick={toggleTheme} compact />
+
+        <div className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col gap-5 z-50">
           {[
             { id: "profile", icon: User, label: "PROFILE" },
             { id: "projects", icon: FolderCode, label: "PROJECTS" },
@@ -278,6 +341,9 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               </span>
             </a>
           ))}
+
+          <div className="my-1 h-px w-9 bg-zinc-300 dark:bg-zinc-800" />
+          <ThemeToggleButton isDark={isDark} onClick={toggleTheme} />
         </div>
 
         <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-6 p-4 md:p-8 lg:pl-24">
@@ -285,23 +351,16 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             id="profile"
             className="relative py-4 md:py-6"
           >
-            <article className="grid overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white dark:border-zinc-700 dark:bg-zinc-950 lg:grid-cols-2">
-              <div className="flex min-h-[360px] flex-col justify-between gap-10 p-6 dark:bg-zinc-950 md:min-h-[390px] md:p-8 lg:p-10">
+            <article className="grid overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white shadow-[8px_8px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[8px_8px_0_#27272a] lg:grid-cols-2">
+              <div className="flex min-h-[360px] flex-col justify-between gap-10 bg-[#fffdf7] p-6 dark:bg-zinc-950 md:min-h-[390px] md:p-8 lg:p-10">
                 <div>
-                  <div className="mb-10 flex items-start justify-between gap-4">
-                    <p className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
+                  <div className="mb-10">
+                    <p className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
                       Portfolio
                     </p>
-                    <button
-                      onClick={toggleTheme}
-                      aria-label="Toggle Dark Mode"
-                      className="shrink-0 rounded-full border-2 border-zinc-900 p-2 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
-                    >
-                      {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                    </button>
                   </div>
 
-                  <h1 className="max-w-[12ch] text-5xl font-black leading-[0.95] text-zinc-900 dark:text-white md:text-7xl">
+                  <h1 className="max-w-[12ch] text-5xl font-black leading-[0.95] text-zinc-950 dark:text-white md:text-7xl">
                     {profile.name}
                   </h1>
 
@@ -310,9 +369,24 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   </p>
                 </div>
 
-                <p className="max-w-[42rem] text-base font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">
-                  {profile.bio}
-                </p>
+                <div className="space-y-5">
+                  <p className="max-w-[42rem] text-base font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">
+                    {profile.bio}
+                  </p>
+
+                  {profile.blogUrl && (
+                    <a
+                      href={profile.blogUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Blog: ${formatDisplayUrl(profile.blogUrl)}`}
+                      className="inline-flex items-center gap-3 rounded-full border-2 border-zinc-900 bg-emerald-300 px-5 py-3 font-mono text-sm font-black uppercase tracking-wider text-zinc-950 transition-colors hover:bg-emerald-200 focus-visible:bg-emerald-200 dark:border-emerald-400 dark:bg-emerald-400 dark:text-zinc-950 dark:hover:bg-emerald-300 dark:focus-visible:bg-emerald-300"
+                    >
+                      <Rss size={18} />
+                      Blog
+                    </a>
+                  )}
+                </div>
               </div>
 
               <aside className="grid border-t-2 border-zinc-900 dark:border-zinc-700 sm:grid-cols-2 lg:border-l-2 lg:border-t-0">
