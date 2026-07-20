@@ -16,8 +16,6 @@ import {
   Star,
   Rss,
 } from "lucide-react";
-import CustomCursor from "./CustomCursor";
-import InteractiveBackground from "./InteractiveBackground";
 import TechButton from "./TechButton";
 import LoadingScreen from "./LoadingScreen";
 
@@ -75,14 +73,18 @@ const ProfileLink = ({ href, icon: Icon, label, value }: ProfileLinkItem) => {
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
       aria-label={`${label}: ${value}`}
-      className="block border-t-2 border-zinc-200 p-4 outline-none transition-colors hover:bg-zinc-100 focus-visible:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:focus-visible:bg-zinc-900"
+      className="group flex min-h-[92px] flex-1 flex-col justify-between border-t-2 border-zinc-200 p-4 outline-none transition-colors hover:bg-zinc-100 focus-visible:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:focus-visible:bg-zinc-900"
     >
-      <span className="mb-1.5 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
-        <Icon size={14} />
-        <span>{label}</span>
-        {isExternal && <ExternalLink size={13} className="opacity-50" />}
+      <span className="flex items-center justify-between text-zinc-500 dark:text-zinc-500">
+        <Icon size={16} />
+        {isExternal && (
+          <ExternalLink
+            size={14}
+            className="opacity-45 transition-opacity group-hover:opacity-80"
+          />
+        )}
       </span>
-      <span className="block break-all font-mono text-lg font-black leading-tight text-zinc-900 dark:text-zinc-100 md:text-xl">
+      <span className="mt-4 block break-all font-mono text-[15px] font-black leading-tight text-zinc-900 dark:text-zinc-100 md:text-base xl:text-lg">
         {value}
       </span>
     </a>
@@ -246,9 +248,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           isLoading ? "h-screen overflow-hidden" : ""
         }`}
       >
-        <CustomCursor />
-        <InteractiveBackground />
-
         <div className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col gap-6 z-50">
           {[
             { id: "profile", icon: User, label: "PROFILE" },
@@ -290,56 +289,58 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
         <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-6 p-4 md:p-8 lg:pl-24">
           <section
             id="profile"
-            className="relative py-6 md:py-8"
+            className="relative py-4 md:py-6"
           >
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-              <div className="rounded-[18px] border-2 border-zinc-900 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-950 md:p-8 lg:col-span-7">
-                <div className="mb-8 flex items-start justify-between gap-4">
-                  <p className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
-                    Portfolio
+            <article className="grid overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white dark:border-zinc-700 dark:bg-zinc-950 lg:grid-cols-2">
+              <div className="flex min-h-[360px] flex-col justify-between gap-10 p-6 dark:bg-zinc-950 md:min-h-[390px] md:p-8 lg:p-10">
+                <div>
+                  <div className="mb-10 flex items-start justify-between gap-4">
+                    <p className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
+                      Portfolio
+                    </p>
+                    <button
+                      onClick={toggleTheme}
+                      aria-label="Toggle Dark Mode"
+                      className="shrink-0 rounded-full border-2 border-zinc-900 p-2 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
+                    >
+                      {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                    </button>
+                  </div>
+
+                  <h1 className="max-w-[12ch] text-5xl font-black leading-[0.95] text-zinc-900 dark:text-white md:text-7xl">
+                    {profile.name}
+                  </h1>
+
+                  <p className="mt-5 font-mono text-base font-bold leading-relaxed text-zinc-700 dark:text-zinc-300 md:text-lg">
+                    {careerSummary}
                   </p>
-                  <button
-                    onClick={toggleTheme}
-                    aria-label="Toggle Dark Mode"
-                    className="shrink-0 rounded-full border-2 border-zinc-900 p-2 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
-                  >
-                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                  </button>
                 </div>
 
-                <h1 className="mb-4 max-w-[12ch] text-5xl font-black leading-[0.95] text-zinc-900 dark:text-white md:text-7xl">
-                  {profile.name}
-                </h1>
-
-                <p className="mb-4 font-mono text-base font-bold leading-relaxed text-zinc-700 dark:text-zinc-300 md:text-lg">
-                  {careerSummary}
-                </p>
-
-                <p className="max-w-[54ch] text-base font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">
+                <p className="max-w-[42rem] text-base font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">
                   {profile.bio}
                 </p>
               </div>
 
-              <aside className="overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white dark:border-zinc-700 dark:bg-zinc-950 lg:col-span-5">
-                <div className="flex items-center justify-between gap-4 p-5">
-                  <h2 className="text-2xl font-black text-zinc-900 dark:text-white">
-                    Links
+              <aside className="grid border-t-2 border-zinc-900 dark:border-zinc-700 sm:grid-cols-2 lg:border-l-2 lg:border-t-0">
+                <div className="flex min-h-full flex-col">
+                  <h2 className="p-4 font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
+                    Contact
                   </h2>
-                  <span className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
-                    Contact / Writing
-                  </span>
-                </div>
-
-                <div>
                   {contactLinks.map((link) => (
                     <ProfileLink key={`${link.label}-${link.href}`} {...link} />
                   ))}
+                </div>
+
+                <div className="flex min-h-full flex-col border-t-2 border-zinc-900 dark:border-zinc-700 sm:border-l-2 sm:border-t-0">
+                  <h2 className="p-4 font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
+                    Writing
+                  </h2>
                   {writingLinks.map((link) => (
                     <ProfileLink key={`${link.label}-${link.href}`} {...link} />
                   ))}
                 </div>
               </aside>
-            </div>
+            </article>
           </section>
 
           <section id="projects" className="mb-8">
