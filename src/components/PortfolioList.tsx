@@ -53,6 +53,7 @@ interface PortfolioListProps {
   profile: {
     name: string;
     role: string;
+    career?: string[];
     bio: string;
     githubUrl: string;
     email: string;
@@ -222,6 +223,10 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     [profile.blogUrl, profile.zennUrl, profile.qiitaUrl]
   );
 
+  const careerItems = profile.career?.length
+    ? profile.career
+    : profile.role.split("/").filter(Boolean);
+
   const glassCardClass =
     "relative flex flex-col " +
     "bg-white/85 dark:bg-zinc-950/80 backdrop-blur-md " +
@@ -298,8 +303,8 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               </button>
             </div>
 
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.85fr)] lg:items-start">
-              <div className="border-y border-dashed border-zinc-300 py-8 dark:border-zinc-800">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_410px] lg:items-stretch">
+              <div className="flex min-h-[430px] flex-col justify-between border-y border-dashed border-zinc-300 py-8 dark:border-zinc-800">
                 <div>
                   <div className="mb-8 flex items-center gap-6">
                     <div className="relative h-24 w-24 shrink-0 rounded-full border border-zinc-200 bg-white p-1 dark:border-zinc-800 dark:bg-black md:h-28 md:w-28">
@@ -343,10 +348,36 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     )}
                   </p>
                 </div>
+
+                <div className="mt-10 grid gap-4 border-t border-dashed border-zinc-300 pt-6 dark:border-zinc-800 sm:grid-cols-[120px_1fr]">
+                  <div className={monoText}>CAREER</div>
+                  <div className="space-y-3">
+                    {careerItems.map((item, i) => (
+                      <div
+                        key={`${item}-${i}`}
+                        className="grid grid-cols-[34px_1fr] items-baseline gap-3"
+                      >
+                        <span className="font-mono text-xs font-bold text-zinc-400 dark:text-zinc-600">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="text-xl font-black text-zinc-900 dark:text-white md:text-2xl">
+                          {item}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <aside className="rounded-lg border border-zinc-200/80 bg-white/45 p-6 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/50 md:p-7">
-                <div className="space-y-7">
+              <aside className="flex min-h-[430px] flex-col justify-center border-y border-zinc-300 py-8 dark:border-zinc-800 lg:border-l lg:border-y-0 lg:pl-8 lg:py-0">
+                <div className="mb-6 flex items-baseline justify-between gap-4">
+                  <div className={monoText}>LINKS</div>
+                  <span className="font-mono text-xs font-bold text-zinc-400 dark:text-zinc-600">
+                    CONTACT / BLOG
+                  </span>
+                </div>
+
+                <div className="space-y-8">
                   <div>
                     <div className={`mb-3 ${monoText}`}>CONTACT</div>
                     <div className="space-y-1">
@@ -359,7 +390,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     </div>
                   </div>
 
-                  <div className="border-t border-dashed border-zinc-300 pt-5 dark:border-zinc-800">
+                  <div className="border-t border-dashed border-zinc-300 pt-6 dark:border-zinc-800">
                     <div className={`mb-3 ${monoText}`}>BLOG</div>
                     <div className="space-y-1">
                       {blogLinks.map((link) => (
