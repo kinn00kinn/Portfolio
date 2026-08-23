@@ -76,7 +76,7 @@ const jsonLd = {
         <header class="grid gap-8 border-b-2 border-zinc-900 pb-10 dark:border-zinc-700 lg:grid-cols-[1fr_24rem] lg:items-end">
           <div>
             <p class="mb-4 font-mono text-xs font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">// Project {String(project.order).padStart(2, "0")}</p>
-            <h1 class="max-w-4xl text-5xl font-black leading-[0.92] tracking-[-0.055em] text-zinc-950 dark:text-zinc-100 md:text-7xl">{project.title}</h1>
+            <h1 class="max-w-4xl break-words text-4xl font-black leading-[0.95] tracking-[-0.045em] text-zinc-950 dark:text-zinc-100 sm:text-5xl md:text-7xl md:leading-[0.92] md:tracking-[-0.055em]">{project.title}</h1>
             <p class="mt-6 max-w-3xl text-lg font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-xl">{project.description}</p>
           </div>
           <div class="flex flex-wrap gap-2 lg:justify-end">
@@ -157,7 +157,7 @@ const jsonLd = {
       </article>
 
       <section class="mt-20 border-t-2 border-zinc-900 pt-10 dark:border-zinc-700">
-        <div class="mb-7 flex items-end justify-between gap-4">
+        <div class="mb-7 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <h2 class="text-3xl font-black tracking-tight">More projects</h2>
           <a href="/projects/" class="font-mono text-xs font-black uppercase text-emerald-700 hover:underline dark:text-emerald-300">View registry →</a>
         </div>

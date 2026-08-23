@@ -8,6 +8,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body {
+    overflow-wrap: anywhere;
+  }
+}
+
 @layer utilities {
   /* ライトモード用ドット（少し濃いグレー） */
   .bg-dot-pattern {

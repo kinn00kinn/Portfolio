@@ -49,12 +49,30 @@ const imageType = image.endsWith(".webp") ? "image/webp" : "image/png";
 <!doctype html>
 <html lang="ja" class="scroll-smooth">
   <head>
-    <script is:inline>
-      try {
-        const savedTheme = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        document.documentElement.classList.toggle("dark", savedTheme === "dark" || (!savedTheme && prefersDark));
-      } catch {}
+    <script is:inline data-astro-rerun>
+      (() => {
+        const getDarkTheme = () => {
+          try {
+            const savedTheme = localStorage.getItem("theme");
+            return savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          } catch {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches;
+          }
+        };
+        const applyTheme = (root) => {
+          const dark = getDarkTheme();
+          root.classList.toggle("dark", dark);
+          root.style.colorScheme = dark ? "dark" : "light";
+        };
+
+        applyTheme(document.documentElement);
+        if (!window.__portfolioThemeListenersBound) {
+          window.__portfolioThemeListenersBound = true;
+          document.addEventListener("astro:before-swap", (event) => applyTheme(event.newDocument.documentElement));
+          document.addEventListener("astro:after-swap", () => applyTheme(document.documentElement));
+          document.addEventListener("astro:page-load", () => applyTheme(document.documentElement));
+        }
+      })();
     </script>
     <script
       type="text/partytown"
@@ -84,7 +102,7 @@ const imageType = image.endsWith(".webp") ? "image/webp" : "image/png";
 
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

@@ -281,13 +281,13 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
         </div>
 
-        <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-6 p-4 md:p-8 lg:pl-24">
+        <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-6 px-3 py-4 sm:px-4 md:p-8 lg:pl-24">
           <section
             id="profile"
             className="relative py-4 md:py-6"
           >
-            <article className="grid overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white shadow-[8px_8px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[8px_8px_0_#090807] lg:grid-cols-2">
-              <div className="flex min-h-[360px] flex-col justify-between gap-10 bg-[#fffdf7] p-6 dark:bg-[#1c1a17] md:min-h-[390px] md:p-8 lg:p-10">
+            <article className="grid overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white shadow-[5px_5px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[5px_5px_0_#090807] sm:shadow-[8px_8px_0_#18181b] sm:dark:shadow-[8px_8px_0_#090807] lg:grid-cols-2">
+              <div className="flex min-h-[340px] flex-col justify-between gap-8 bg-[#fffdf7] p-5 dark:bg-[#1c1a17] sm:p-6 md:min-h-[390px] md:p-8 lg:p-10">
                 <div>
                   <div className="mb-10">
                     <p className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
@@ -295,7 +295,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     </p>
                   </div>
 
-                  <h1 className="max-w-[12ch] text-5xl font-black leading-[0.95] text-zinc-950 dark:text-zinc-100 md:text-7xl">
+                  <h1 className="max-w-[12ch] break-words text-4xl font-black leading-[0.95] text-zinc-950 dark:text-zinc-100 sm:text-5xl md:text-7xl">
                     {profile.name}
                   </h1>
 
@@ -347,23 +347,23 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           </section>
 
           <section id="projects" className="mb-8">
-            <div className="mb-6 flex items-end justify-between border-b border-zinc-300 pb-4 dark:border-zinc-700">
+            <div className="mb-6 flex items-end justify-between gap-3 border-b border-zinc-300 pb-4 dark:border-zinc-700">
               <div className="flex items-center gap-3">
                 <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-zinc-200 dark:text-zinc-900">
                   <FolderCode size={20} />
                 </div>
-                <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-2xl sm:tracking-wider">
                   Pinned Projects
                 </h2>
               </div>
-              <span className={`${monoText} font-bold`}>:: SECTION_02</span>
+              <span className={`${monoText} hidden font-bold sm:block`}>:: SECTION_02</span>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {repos.slice(0, 4).map((repo, i) => (
                 <article
                   key={repo.url}
-                  className="group relative flex aspect-video flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white/85 p-4 shadow-sm transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:bg-[#1c1a17]/90 dark:hover:border-zinc-500 md:p-5"
+                  className="group relative flex min-h-[13rem] flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white/85 p-4 shadow-sm transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:bg-[#1c1a17]/90 dark:hover:border-zinc-500 sm:aspect-video md:p-5"
                 >
                   <div className="flex items-center justify-between gap-2 font-mono text-[10px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 md:text-[11px]">
                     <span>// PROJ_{String(i + 1).padStart(2, "0")}</span>
@@ -416,19 +416,19 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           </section>
 
           <section id="logs">
-            <div className="mb-8 flex items-end justify-between border-b border-zinc-300 pb-4 dark:border-zinc-700">
+            <div className="mb-8 flex items-end justify-between gap-3 border-b border-zinc-300 pb-4 dark:border-zinc-700">
               <div className="flex items-center gap-3">
                 <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-zinc-200 dark:text-zinc-900">
                   <BookOpen size={20} />
                 </div>
-                <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-2xl sm:tracking-wider">
                   Latest Blog
                 </h2>
               </div>
-              <span className={`${monoText} font-bold`}>:: SECTION_03</span>
+              <span className={`${monoText} hidden font-bold sm:block`}>:: SECTION_03</span>
             </div>
 
-            <div className="relative space-y-5 border-l-2 border-zinc-200 pl-8 dark:border-zinc-800">
+            <div className="relative space-y-5 border-l-2 border-zinc-200 pl-4 dark:border-zinc-800 sm:pl-8">
               {articles.map((article, i) => (
                 <a
                   key={article.link}
