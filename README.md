@@ -2,6 +2,8 @@
 
 kinn00kinnの成果物、記事、外部での採用・言及を集約するAstro製ポートフォリオです。
 
+**Project page:** https://kinn-kinn.com/
+
 ## Routes
 
 - `/projects/`: 検索可能なProject registry
