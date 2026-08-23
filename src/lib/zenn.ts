@@ -9,7 +9,7 @@ export interface Article {
   likedCount?: number; // RSSでは取得できないためオプショナルに変更
 }
 
-export async function getZennArticles(): Promise<Article[]> {
+export async function getZennArticles(limit?: number): Promise<Article[]> {
   const parser = new Parser();
   // ZennのRSSフィードを取得
   const feed = await parser.parseURL("https://zenn.dev/kinnkinn/feed");
@@ -18,8 +18,8 @@ export async function getZennArticles(): Promise<Article[]> {
     return [];
   }
 
-  // 最新5件を取得して整形
-  return feed.items.slice(0, 3).map((item) => {
+  const items = typeof limit === "number" ? feed.items.slice(0, limit) : feed.items;
+  return items.map((item) => {
     return {
       title: item.title || "",
       link: item.link || "",

@@ -2,6 +2,15 @@
 
 kinn00kinnの成果物、記事、外部での採用・言及を集約するAstro製ポートフォリオです。
 
+## Routes
+
+- `/projects/`: 検索可能なProject registry
+- `/projects/[id]/`: 概要、特徴、外部リンク、関連ActivityをまとめたProject Page
+- `/writing/`: 公開記事の索引
+- `/activity/`: Release、Article、Mention、Adoption、Researchの統合タイムライン
+
+旧`/project/`は`/projects/`へリダイレクトします。
+
 ## ドキュメント
 
 - [ユーザーマニュアル](doc/ユーザーマニュアル.md): ページ構成、検索、リンク、テーマ切り替えの使い方

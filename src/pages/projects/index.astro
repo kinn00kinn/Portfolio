@@ -8,21 +8,21 @@ import { projects as projectData } from "../../data/projects";
 const projects = [...projectData].sort((a, b) => a.order - b.order);
 ---
 
-<Layout title="Projects — kinn00kinn" description="kinn00kinnが制作・公開したプロジェクトの一覧。技術やキーワードで検索できます。">
+<Layout title="Projects — kinn00kinn" description="kinn00kinnが制作・公開したソフトウェア、研究、実験のregistry。技術やキーワードで検索できます。">
   <div class="min-h-screen bg-[#f4f2ee] text-zinc-900 transition-colors dark:bg-[#070707] dark:text-zinc-100">
     <SiteHeader />
     <main class="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-20">
       <section class="mb-10 grid gap-8 border-b-2 border-zinc-900 pb-10 dark:border-zinc-700 md:grid-cols-[1fr_auto] md:items-end">
         <div>
-          <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">// Archive 01</p>
+          <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">// Registry 01</p>
           <h1 class="text-5xl font-black tracking-[-0.06em] text-zinc-950 dark:text-white md:text-7xl">Projects</h1>
-          <p class="mt-5 max-w-2xl text-base font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">作ったもの、育てているもの。</p>
+          <p class="mt-5 max-w-2xl text-base font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">作ったもの、育てているもの。その背景と活動まで。</p>
         </div>
         <p id="project-count" aria-live="polite" class="font-mono text-xs font-bold text-zinc-500 dark:text-zinc-400">{projects.length} / {projects.length} PROJECTS</p>
       </section>
 
       <div class="mb-8">
-        <label for="project-search" class="mb-2 block font-mono text-xs font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-300">Search archive</label>
+        <label for="project-search" class="mb-2 block font-mono text-xs font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-300">Search registry</label>
         <div class="relative">
           <svg aria-hidden="true" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
           <input id="project-search" type="search" autocomplete="off" placeholder="名前・説明・技術で検索…" class="w-full rounded-lg border-2 border-zinc-900 bg-white py-4 pl-12 pr-4 font-mono text-sm font-bold outline-none placeholder:text-zinc-400 focus:ring-4 focus:ring-emerald-300/60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white" />
@@ -45,11 +45,7 @@ const projects = [...projectData].sort((a, b) => a.order - b.order);
   const empty = document.querySelector<HTMLElement>("#project-empty");
 
   input?.addEventListener("input", () => {
-    const terms = input.value
-      .trim()
-      .toLocaleLowerCase("ja")
-      .split(/\s+/)
-      .filter(Boolean);
+    const terms = input.value.trim().toLocaleLowerCase("ja").split(/\s+/).filter(Boolean);
     let visible = 0;
     for (const card of cards) {
       const searchText = card.dataset.search ?? "";
@@ -63,7 +59,5 @@ const projects = [...projectData].sort((a, b) => a.order - b.order);
 </script>
 
 <style is:global>
-  [data-project-card][hidden] {
-    display: none !important;
-  }
+  [data-project-card][hidden] { display: none !important; }
 </style>

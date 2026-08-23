@@ -8,6 +8,9 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
   site: "https://kinn-kinn.com",
+  redirects: {
+    "/project": "/projects/",
+  },
   integrations: [
     react(),
     tailwind(),

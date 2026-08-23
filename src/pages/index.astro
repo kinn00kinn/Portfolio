@@ -5,13 +5,14 @@ import { getZennArticles } from "../lib/zenn";
 import PortfolioList from "../components/PortfolioList";
 import SiteHeader from "../components/SiteHeader.astro";
 import { profile } from "../config";
-import { projects } from "../data/projects";
+import { getProjectPath, projects } from "../data/projects";
 
 // Projectsは外部APIではなく、src/data/projects.ts を正本にする。
 const repos = projects
   .filter((project) => project.featured)
   .sort((a, b) => a.order - b.order)
   .map((project) => ({
+    projectUrl: getProjectPath(project),
     name: project.title,
     description: project.description,
     url: project.github,
@@ -25,13 +26,36 @@ const repos = projects
       : null,
     zenn: project.zenn,
   }));
-const articles = await getZennArticles();
+const articles = await getZennArticles(3);
+const site = Astro.site ?? new URL("https://kinn-kinn.com");
+const personUrl = new URL("/#person", site).href;
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    name: "kinn00kinn — Software / Research / Writing",
+    url: new URL("/", site).href,
+    mainEntity: { "@id": personUrl },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": personUrl,
+    name: profile.name,
+    url: new URL("/", site).href,
+    image: new URL(profile.avatarUrl, site).href,
+    sameAs: [profile.githubUrl, profile.linkedinUrl, profile.blogUrl, profile.zennUrl, profile.qiitaUrl].filter(Boolean),
+    jobTitle: profile.role,
+    description: profile.bio,
+  },
+];
 ---
 
 <Layout
-  title={`${profile.name} - Portfolio`}
-  description={profile.bio}
+  title={`${profile.name} — Software / Research / Writing`}
+  description="kinn00kinnのソフトウェア、研究、執筆、外部での採用・言及を集約するホームドメイン。"
   image="/og-image.png"
+  jsonLd={jsonLd}
 >
   <SiteHeader />
   <main>

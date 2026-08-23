@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 interface Repository {
+  projectUrl: string;
   name: string;
   description: string;
   url: string;
@@ -71,7 +72,7 @@ const ProfileLink = ({
   displayText,
   featured,
 }: ProfileLinkItem) => {
-  const isExternal = !href.startsWith("mailto:");
+  const isExternal = /^https?:\/\//.test(href);
 
   return (
     <a
@@ -189,13 +190,19 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
   const writingLinks = useMemo(
     () =>
       [
+        {
+          href: "/writing/",
+          icon: BookOpen,
+          label: "Writing index",
+          value: "kinn-kinn.com/writing",
+          featured: true,
+        },
         profile.blogUrl
           ? {
               href: profile.blogUrl,
               icon: Rss,
               label: "Blog",
               value: formatDisplayUrl(profile.blogUrl),
-              featured: true,
             }
           : undefined,
         profile.zennUrl
@@ -290,7 +297,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                 <div>
                   <div className="mb-10">
                     <p className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-                      Portfolio
+                      Software / Research / Writing
                     </p>
                   </div>
 
@@ -373,7 +380,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   </div>
 
                   <h3 className="mt-3 line-clamp-1 text-lg font-black leading-tight text-zinc-900 transition-colors group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-300 md:text-xl">
-                    <a href={repo.homepageUrl || repo.url} target="_blank" rel="noreferrer">{repo.name}<span className="ml-1 text-xs">↗</span></a>
+                    <a href={repo.projectUrl}>{repo.name}<span className="ml-1 text-xs">→</span></a>
                   </h3>
                   <p className="mt-1.5 line-clamp-2 text-xs font-medium leading-[1.5] text-zinc-600 dark:text-zinc-300 md:text-[13px]">
                     {repo.description || "No description provided."}
@@ -408,7 +415,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               ))}
             </div>
             <div className="mt-7 flex justify-end">
-              <a href="/project/" className="rounded-md border-2 border-zinc-900 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0_#18181b] transition-transform hover:-translate-y-0.5 dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a]">
+              <a href="/projects/" className="rounded-md border-2 border-zinc-900 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0_#18181b] transition-transform hover:-translate-y-0.5 dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a]">
                 All projects →
               </a>
             </div>
