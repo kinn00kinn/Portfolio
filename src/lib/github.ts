@@ -29,7 +29,7 @@ export async function getGithubData(): Promise<GithubData> {
     {
       viewer {
         avatarUrl
-        pinnedItems(first: 6, types: REPOSITORY) {
+        pinnedItems(first: 3, types: REPOSITORY) {
           nodes {
             ... on Repository {
               name
