@@ -63,7 +63,7 @@ const jsonLd = {
   ogType="article"
   jsonLd={jsonLd}
 >
-  <div class="min-h-screen bg-[#f4f2ee] text-zinc-900 transition-colors dark:bg-[#070707] dark:text-zinc-100">
+  <div class="min-h-screen bg-[#f4f2ee] text-zinc-900 transition-colors dark:bg-[#12110f] dark:text-zinc-200">
     <SiteHeader />
     <main class="mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-16">
       <nav aria-label="パンくずリスト" class="mb-8 font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
@@ -76,29 +76,29 @@ const jsonLd = {
         <header class="grid gap-8 border-b-2 border-zinc-900 pb-10 dark:border-zinc-700 lg:grid-cols-[1fr_24rem] lg:items-end">
           <div>
             <p class="mb-4 font-mono text-xs font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">// Project {String(project.order).padStart(2, "0")}</p>
-            <h1 class="max-w-4xl text-5xl font-black leading-[0.92] tracking-[-0.055em] text-zinc-950 dark:text-white md:text-7xl">{project.title}</h1>
+            <h1 class="max-w-4xl text-5xl font-black leading-[0.92] tracking-[-0.055em] text-zinc-950 dark:text-zinc-100 md:text-7xl">{project.title}</h1>
             <p class="mt-6 max-w-3xl text-lg font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-xl">{project.description}</p>
           </div>
           <div class="flex flex-wrap gap-2 lg:justify-end">
-            {project.tags.map((tag) => <span class="rounded-full border border-zinc-400 bg-white px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider dark:border-zinc-700 dark:bg-zinc-950">{tag}</span>)}
+            {project.tags.map((tag) => <span class="rounded-full border border-zinc-400 bg-white px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider dark:border-zinc-700 dark:bg-[#1c1a17]">{tag}</span>)}
           </div>
         </header>
 
-        <div class="my-10 overflow-hidden rounded-xl border-2 border-zinc-900 bg-white shadow-[7px_7px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[7px_7px_0_#27272a]">
+        <div class="my-10 overflow-hidden rounded-xl border-2 border-zinc-900 bg-white shadow-[7px_7px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[7px_7px_0_#090807]">
           <img src={project.image} alt={project.imageAlt} width="1200" height="675" class="aspect-video w-full object-cover" />
         </div>
 
         <section aria-label="Project links" class="mb-14 flex flex-wrap gap-3">
           {project.demo && <a href={project.demo} target="_blank" rel="noreferrer" class="rounded-md border-2 border-zinc-900 bg-emerald-300 px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-zinc-950 shadow-[3px_3px_0_#18181b] hover:-translate-y-0.5 dark:border-emerald-400 dark:shadow-[3px_3px_0_#064e3b]">{project.demoLabel ?? "Open"} ↗</a>}
-          <a href={project.github} target="_blank" rel="noreferrer" class="rounded-md border-2 border-zinc-900 bg-zinc-900 px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-white hover:-translate-y-0.5 dark:border-zinc-600 dark:bg-white dark:text-zinc-950">GitHub ↗</a>
-          {project.zenn && <a href={project.zenn} target="_blank" rel="noreferrer" class="rounded-md border-2 border-sky-500 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-sky-700 hover:-translate-y-0.5 dark:bg-zinc-950 dark:text-sky-300">Zenn ↗</a>}
+          <a href={project.github} target="_blank" rel="noreferrer" class="rounded-md border-2 border-zinc-900 bg-zinc-900 px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-white hover:-translate-y-0.5 dark:border-zinc-600 dark:bg-zinc-200 dark:text-zinc-900">GitHub ↗</a>
+          {project.zenn && <a href={project.zenn} target="_blank" rel="noreferrer" class="rounded-md border-2 border-sky-500 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-sky-700 hover:-translate-y-0.5 dark:bg-[#1c1a17] dark:text-sky-300">Zenn ↗</a>}
         </section>
 
         <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <div class="space-y-14">
             <section>
               <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">01 / Overview</p>
-              <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-white">このプロジェクトについて</h2>
+              <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-zinc-100">このプロジェクトについて</h2>
               <div class="mt-6 space-y-5 text-base font-medium leading-8 text-zinc-700 dark:text-zinc-300">
                 {project.overview.map((paragraph) => <p>{paragraph}</p>)}
               </div>
@@ -106,10 +106,10 @@ const jsonLd = {
 
             <section>
               <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">02 / Highlights</p>
-              <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-white">特徴</h2>
+              <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-zinc-100">特徴</h2>
               <ul class="mt-6 grid gap-4 sm:grid-cols-2">
                 {project.highlights.map((highlight, index) => (
-                  <li class="rounded-lg border-2 border-zinc-900 bg-white p-5 shadow-[3px_3px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a]">
+                  <li class="rounded-lg border-2 border-zinc-900 bg-white p-5 shadow-[3px_3px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[3px_3px_0_#090807]">
                     <span class="mb-3 block font-mono text-[10px] font-black text-emerald-700 dark:text-emerald-300">H_{String(index + 1).padStart(2, "0")}</span>
                     <span class="font-bold leading-relaxed">{highlight}</span>
                   </li>
@@ -120,7 +120,7 @@ const jsonLd = {
             {project.impact && project.impact.length > 0 && (
               <section>
                 <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">03 / Impact</p>
-                <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-white">外部での広がり</h2>
+                <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-zinc-100">外部での広がり</h2>
                 <ul class="mt-6 space-y-3">
                   {project.impact.map((item) => <li class="border-l-4 border-emerald-400 pl-5 font-medium leading-7 text-zinc-700 dark:text-zinc-300">{item}</li>)}
                 </ul>
@@ -129,7 +129,7 @@ const jsonLd = {
           </div>
 
           <aside>
-            <div class="sticky top-24 rounded-xl border-2 border-zinc-900 bg-white p-5 shadow-[5px_5px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[5px_5px_0_#27272a]">
+            <div class="sticky top-24 rounded-xl border-2 border-zinc-900 bg-white p-5 shadow-[5px_5px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[5px_5px_0_#090807]">
               <div class="flex items-center justify-between border-b border-dashed border-zinc-300 pb-4 dark:border-zinc-700">
                 <h2 class="text-xl font-black">Related activity</h2>
                 <span class="font-mono text-xs font-black text-zinc-400">{relatedActivities.length}</span>

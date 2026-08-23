@@ -3,9 +3,16 @@ import Layout from "../../layouts/Layout.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import { profile } from "../../config";
+import { getBlogArticles } from "../../lib/blog";
 import { getZennArticles } from "../../lib/zenn";
 
-const articles = await getZennArticles();
+const [zennArticles, blogArticles] = await Promise.all([
+  getZennArticles(),
+  getBlogArticles(),
+]);
+const articles = [...zennArticles, ...blogArticles].sort((a, b) =>
+  b.pubDate.localeCompare(a.pubDate),
+);
 const groupedArticles = Object.entries(
   articles.reduce<Record<string, typeof articles>>((groups, article) => {
     const year = article.pubDate.slice(0, 4) || "Other";
@@ -16,17 +23,17 @@ const groupedArticles = Object.entries(
 ---
 
 <Layout title="Writing — kinn00kinn" description="kinn00kinnが公開した技術記事と文章の索引。Zenn、Blog、Qiitaの原文へつながります。">
-  <div class="min-h-screen bg-[#f4f2ee] text-zinc-900 transition-colors dark:bg-[#070707] dark:text-zinc-100">
+  <div class="min-h-screen bg-[#f4f2ee] text-zinc-900 transition-colors dark:bg-[#12110f] dark:text-zinc-200">
     <SiteHeader />
     <main class="mx-auto max-w-5xl px-4 py-12 md:px-8 md:py-20">
       <header class="border-b-2 border-zinc-900 pb-10 dark:border-zinc-700">
         <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">// Writing index</p>
-        <h1 class="text-5xl font-black tracking-[-0.06em] text-zinc-950 dark:text-white md:text-7xl">Writing</h1>
+        <h1 class="text-5xl font-black tracking-[-0.06em] text-zinc-950 dark:text-zinc-100 md:text-7xl">Writing</h1>
         <p class="mt-5 max-w-2xl text-base font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">学んだこと、作ったもの、その途中で考えたこと。本文は公開元で読めます。</p>
         <nav aria-label="執筆サービス" class="mt-7 flex flex-wrap gap-3">
-          <a href={profile.blogUrl} target="_blank" rel="noreferrer" class="rounded-md border-2 border-zinc-900 bg-zinc-900 px-4 py-2.5 font-mono text-xs font-black uppercase text-white dark:border-zinc-600 dark:bg-white dark:text-zinc-950">Blog ↗</a>
-          <a href={profile.zennUrl} target="_blank" rel="noreferrer" class="rounded-md border-2 border-sky-500 bg-white px-4 py-2.5 font-mono text-xs font-black uppercase text-sky-700 dark:bg-zinc-950 dark:text-sky-300">Zenn ↗</a>
-          <a href={profile.qiitaUrl} target="_blank" rel="noreferrer" class="rounded-md border-2 border-emerald-500 bg-white px-4 py-2.5 font-mono text-xs font-black uppercase text-emerald-700 dark:bg-zinc-950 dark:text-emerald-300">Qiita ↗</a>
+          <a href={profile.blogUrl} target="_blank" rel="noreferrer" class="rounded-md border-2 border-zinc-900 bg-zinc-900 px-4 py-2.5 font-mono text-xs font-black uppercase text-white dark:border-zinc-600 dark:bg-zinc-200 dark:text-zinc-900">Blog ↗</a>
+          <a href={profile.zennUrl} target="_blank" rel="noreferrer" class="rounded-md border-2 border-sky-500 bg-white px-4 py-2.5 font-mono text-xs font-black uppercase text-sky-700 dark:bg-[#1c1a17] dark:text-sky-300">Zenn ↗</a>
+          <a href={profile.qiitaUrl} target="_blank" rel="noreferrer" class="rounded-md border-2 border-emerald-500 bg-white px-4 py-2.5 font-mono text-xs font-black uppercase text-emerald-700 dark:bg-[#1c1a17] dark:text-emerald-300">Qiita ↗</a>
         </nav>
       </header>
 
@@ -41,10 +48,10 @@ const groupedArticles = Object.entries(
             <ol class="grid gap-4">
               {yearArticles.map((article) => (
                 <li>
-                  <a href={article.link} target="_blank" rel="noreferrer" class="group grid gap-3 rounded-xl border-2 border-zinc-900 bg-white p-5 shadow-[4px_4px_0_#18181b] transition-transform hover:-translate-y-0.5 dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[4px_4px_0_#27272a] sm:grid-cols-[7rem_1fr_auto] sm:items-center">
+                  <a href={article.link} target="_blank" rel="noreferrer" class="group grid gap-3 rounded-xl border-2 border-zinc-900 bg-white p-5 shadow-[4px_4px_0_#18181b] transition-transform hover:-translate-y-0.5 dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[4px_4px_0_#090807] sm:grid-cols-[7rem_1fr_auto] sm:items-center">
                     <time datetime={article.pubDate} class="font-mono text-xs font-black text-zinc-500">{article.pubDate.replaceAll("-", ".")}</time>
-                    <h3 class="font-black leading-snug text-zinc-950 group-hover:text-sky-700 dark:text-white dark:group-hover:text-sky-300">{article.title}</h3>
-                    <span class="font-mono text-[10px] font-black uppercase text-sky-700 dark:text-sky-300">Zenn ↗</span>
+                    <h3 class="font-black leading-snug text-zinc-950 group-hover:text-sky-700 dark:text-zinc-100 dark:group-hover:text-sky-300">{article.title}</h3>
+                    <span class:list={["font-mono text-[10px] font-black uppercase", article.source === "Blog" ? "text-amber-700 dark:text-amber-300" : "text-sky-700 dark:text-sky-300"]}>{article.source} ↗</span>
                   </a>
                 </li>
               ))}
