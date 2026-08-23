@@ -20,6 +20,15 @@ export interface Activity {
 // Activityは新しい順に、このファイルだけを手作業で更新する。
 export const activities: Activity[] = [
   {
+    date: "2026-08-22",
+    type: "Article",
+    title: "Five Card Loveの仕組みを解説",
+    description:
+      "5枚のカードだけで両思いかを判定するFive-Card Trickを、Webで再現した設計と実装をまとめました。",
+    url: "https://zenn.dev/kinnkinn/articles/3c98e0d26663bd",
+    project: "five-card-love",
+  },
+  {
     date: "2026-08-21",
     type: "Release",
     title: "Five Card Loveを公開",
@@ -81,6 +90,15 @@ export const activities: Activity[] = [
     project: "latte-logic",
   },
   {
+    date: "2025-11-11",
+    type: "Article",
+    title: "パンダ特化型SNS PanDoの技術スタックを公開",
+    description:
+      "Next.js、Python、Supabaseで構築したPanDoの構成と、UXへのこだわりをZennにまとめました。",
+    url: "https://zenn.dev/kinnkinn/articles/622a65a2a76dce",
+    project: "pando",
+  },
+  {
     date: "2026-02-15",
     type: "Release",
     title: "LatteLogic 1.0.0を公開",
@@ -106,6 +124,15 @@ export const activities: Activity[] = [
       "WebRTC、GitHub Pages、Renderを組み合わせた構成をZennで解説しました。",
     url: "https://zenn.dev/kinnkinn/articles/ff844e4d9e3ce4",
     project: "p2p-othello",
+  },
+  {
+    date: "2025-06-08",
+    type: "Article",
+    title: "画像ペアからLUTを作る方法を解説",
+    description:
+      "変換前後の画像から3D LUTを推定し、別の画像へ色味を適用する方法をZennにまとめました。",
+    url: "https://zenn.dev/kinnkinn/articles/6d4de71d91ac6a",
+    project: "lut-estimator",
   },
   {
     date: "2025-06-08",
