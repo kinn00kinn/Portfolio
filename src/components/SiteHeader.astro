@@ -48,9 +48,17 @@ const links = [
 </header>
 
 <script>
-  const themeButton = document.querySelector<HTMLButtonElement>("#theme-toggle");
-  themeButton?.addEventListener("click", () => {
-    const dark = document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", dark ? "dark" : "light");
-  });
+  function bindThemeToggle() {
+    const themeButton = document.querySelector<HTMLButtonElement>("#theme-toggle");
+    if (!themeButton || themeButton.dataset.bound === "true") return;
+
+    themeButton.dataset.bound = "true";
+    themeButton.addEventListener("click", () => {
+      const dark = document.documentElement.classList.toggle("dark");
+      localStorage.setItem("theme", dark ? "dark" : "light");
+    });
+  }
+
+  bindThemeToggle();
+  document.addEventListener("astro:page-load", bindThemeToggle);
 </script>

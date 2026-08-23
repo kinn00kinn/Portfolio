@@ -39,23 +39,29 @@ const projects = [...projectData].sort((a, b) => a.order - b.order);
 </Layout>
 
 <script>
-  const input = document.querySelector<HTMLInputElement>("#project-search");
-  const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-project-card]"));
-  const count = document.querySelector<HTMLElement>("#project-count");
-  const empty = document.querySelector<HTMLElement>("#project-empty");
+  function bindProjectSearch() {
+    const input = document.querySelector<HTMLInputElement>("#project-search");
+    if (!input || input.dataset.bound === "true") return;
+    input.dataset.bound = "true";
+    input.addEventListener("input", () => {
+      const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-project-card]"));
+      const count = document.querySelector<HTMLElement>("#project-count");
+      const empty = document.querySelector<HTMLElement>("#project-empty");
+      const terms = input.value.trim().toLocaleLowerCase("ja").split(/\s+/).filter(Boolean);
+      let visible = 0;
+      for (const card of cards) {
+        const searchText = card.dataset.search ?? "";
+        const matches = terms.every((term) => searchText.includes(term));
+        card.hidden = !matches;
+        if (matches) visible += 1;
+      }
+      if (count) count.textContent = `${visible} / ${cards.length} PROJECTS`;
+      if (empty) empty.hidden = visible !== 0;
+    });
+  }
 
-  input?.addEventListener("input", () => {
-    const terms = input.value.trim().toLocaleLowerCase("ja").split(/\s+/).filter(Boolean);
-    let visible = 0;
-    for (const card of cards) {
-      const searchText = card.dataset.search ?? "";
-      const matches = terms.every((term) => searchText.includes(term));
-      card.hidden = !matches;
-      if (matches) visible += 1;
-    }
-    if (count) count.textContent = `${visible} / ${cards.length} PROJECTS`;
-    if (empty) empty.hidden = visible !== 0;
-  });
+  bindProjectSearch();
+  document.addEventListener("astro:page-load", bindProjectSearch);
 </script>
 
 <style is:global>

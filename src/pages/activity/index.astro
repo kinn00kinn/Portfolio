@@ -21,6 +21,13 @@ const typeDot = {
   Adoption: "bg-violet-400",
   Research: "bg-rose-400",
 };
+const groupedActivities = Object.entries(
+  activities.reduce<Record<string, typeof activities>>((groups, activity) => {
+    const year = activity.date.slice(0, 4) || "Other";
+    (groups[year] ??= []).push(activity);
+    return groups;
+  }, {}),
+).sort(([a], [b]) => b.localeCompare(a));
 ---
 
 <Layout title="Activity — kinn00kinn" description="リリース、記事、外部言及、採用、研究を同じ時系列でたどる活動ログ。">
@@ -36,41 +43,94 @@ const typeDot = {
         </ul>
       </section>
 
-      <ol class="activity-graph relative">
-        {activities.map((activity, index) => {
-          const { date: dateValue, type, title, description, url, project: projectId } = activity;
-          const date = new Date(`${dateValue}T00:00:00+09:00`);
-          const project = projectId ? projectById.get(projectId) : undefined;
-          return (
-            <li class="activity-row relative grid min-w-0 gap-3 pb-8 pl-16 md:grid-cols-[8rem_1fr] md:gap-6 md:pl-20">
-              <div class:list={["activity-node absolute left-[21px] top-4 z-10 grid h-6 w-6 place-items-center rounded-[5px] border-2 border-zinc-900 shadow-[2px_2px_0_#18181b] dark:border-zinc-700 dark:shadow-[2px_2px_0_#27272a]", typeDot[type]]}>
-                <span class="h-1.5 w-1.5 rounded-sm bg-zinc-950/60"></span>
-              </div>
-              <time datetime={date.toISOString()} class="pt-1 font-mono text-sm font-black tracking-tight text-zinc-500 dark:text-zinc-400">
-                {date.toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit" }).replaceAll("/", ".")}
-              </time>
-              <article class="min-w-0 overflow-hidden rounded-xl border-2 border-zinc-900 bg-white p-5 shadow-[4px_4px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[4px_4px_0_#090807] md:p-6">
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                  <span class:list={["rounded px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-widest", typeStyle[type]]}>{type}</span>
-                  <span class="font-mono text-[10px] text-zinc-400">ACT_{String(activities.length - index).padStart(3, "0")}</span>
-                </div>
-                <h2 class="mt-4 break-words text-xl font-black tracking-tight text-zinc-950 dark:text-zinc-100 md:text-2xl">{title}</h2>
-                <p class="mt-2 break-words text-sm font-medium leading-relaxed text-zinc-600 dark:text-zinc-300">{description}</p>
-                {(project || url) && (
-                  <div class="mt-5 flex flex-wrap gap-3 border-t border-dashed border-zinc-300 pt-4 font-mono text-[10px] font-black uppercase tracking-wider dark:border-zinc-700">
-                    {project && <a href={getProjectPath(project)} class="rounded bg-zinc-900 px-3 py-2 text-white hover:bg-emerald-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-emerald-300">Project: {project.title} →</a>}
-                    {url && <a href={url} target="_blank" rel="noreferrer" class="rounded border border-zinc-400 px-3 py-2 hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-[#26231f]">Source ↗</a>}
-                  </div>
-                )}
-              </article>
-            </li>
-          );
-        })}
-      </ol>
+      <section aria-label="Activity検索" class="mb-5 grid gap-4 rounded-xl border-2 border-zinc-900 bg-white p-4 dark:border-zinc-700 dark:bg-[#1c1a17] sm:grid-cols-[1fr_auto] sm:items-end">
+        <div>
+          <label for="activity-search" class="mb-2 block font-mono text-xs font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-300">Search activity</label>
+          <input id="activity-search" type="search" autocomplete="off" placeholder="タイトル・説明・種類・Project・年で検索…" class="w-full rounded-lg border-2 border-zinc-900 bg-[#f4f2ee] px-4 py-3 font-mono text-sm font-bold outline-none placeholder:text-zinc-400 focus:ring-4 focus:ring-emerald-300/60 dark:border-zinc-600 dark:bg-[#12110f] dark:text-zinc-100" />
+        </div>
+        <p id="activity-count" aria-live="polite" class="pb-1 font-mono text-xs font-black text-zinc-500">{activities.length} / {activities.length} EVENTS</p>
+      </section>
+
+      <nav aria-label="年別リンク" class="mb-12 flex flex-wrap gap-2">
+        {groupedActivities.map(([year]) => <a href={`#activity-${year}`} class="rounded-full border border-zinc-400 px-3 py-1.5 font-mono text-xs font-black hover:bg-zinc-200 dark:border-zinc-600 dark:hover:bg-[#26231f]">{year}</a>)}
+      </nav>
+
+      <div class="space-y-16">
+        {groupedActivities.map(([year, yearActivities]) => (
+          <section id={`activity-${year}`} data-activity-year class="scroll-mt-24">
+            <div class="mb-6 flex items-center gap-5">
+              <h2 class="font-mono text-3xl font-black tracking-tight">{year}</h2>
+              <span class="h-px flex-1 bg-zinc-400 dark:bg-zinc-700"></span>
+              <span class="font-mono text-xs font-bold text-zinc-500">{yearActivities.length} EVENTS</span>
+            </div>
+            <ol class="activity-graph relative">
+              {yearActivities.map((activity) => {
+                const { date: dateValue, type, title, description, url, project: projectId } = activity;
+                const date = new Date(`${dateValue}T00:00:00+09:00`);
+                const project = projectId ? projectById.get(projectId) : undefined;
+                const globalIndex = activities.indexOf(activity);
+                const searchText = [dateValue, type, title, description, project?.title ?? ""].join(" ").toLocaleLowerCase("ja");
+                return (
+                  <li data-activity-item data-search={searchText} class="activity-row relative grid min-w-0 gap-3 pb-8 pl-16 md:grid-cols-[8rem_1fr] md:gap-6 md:pl-20">
+                    <div class:list={["activity-node absolute left-[21px] top-4 z-10 grid h-6 w-6 place-items-center rounded-[5px] border-2 border-zinc-900 shadow-[2px_2px_0_#18181b] dark:border-zinc-700 dark:shadow-[2px_2px_0_#27272a]", typeDot[type]]}>
+                      <span class="h-1.5 w-1.5 rounded-sm bg-zinc-950/60"></span>
+                    </div>
+                    <time datetime={date.toISOString()} class="pt-1 font-mono text-sm font-black tracking-tight text-zinc-500 dark:text-zinc-400">{date.toLocaleDateString("ja-JP", { month: "2-digit", day: "2-digit" }).replaceAll("/", ".")}</time>
+                    <article class="min-w-0 overflow-hidden rounded-xl border-2 border-zinc-900 bg-white p-5 shadow-[4px_4px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[4px_4px_0_#090807] md:p-6">
+                      <div class="flex flex-wrap items-start justify-between gap-3">
+                        <span class:list={["rounded px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-widest", typeStyle[type]]}>{type}</span>
+                        <span class="font-mono text-[10px] text-zinc-400">ACT_{String(activities.length - globalIndex).padStart(3, "0")}</span>
+                      </div>
+                      <h3 class="mt-4 break-words text-xl font-black tracking-tight text-zinc-950 dark:text-zinc-100 md:text-2xl">{title}</h3>
+                      <p class="mt-2 break-words text-sm font-medium leading-relaxed text-zinc-600 dark:text-zinc-300">{description}</p>
+                      {(project || url) && (
+                        <div class="mt-5 flex flex-wrap gap-3 border-t border-dashed border-zinc-300 pt-4 font-mono text-[10px] font-black uppercase tracking-wider dark:border-zinc-700">
+                          {project && <a href={getProjectPath(project)} class="rounded bg-zinc-900 px-3 py-2 text-white hover:bg-emerald-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-emerald-300">Project: {project.title} →</a>}
+                          {url && <a href={url} target="_blank" rel="noreferrer" class="rounded border border-zinc-400 px-3 py-2 hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-[#26231f]">Source ↗</a>}
+                        </div>
+                      )}
+                    </article>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        ))}
+      </div>
+      <p id="activity-empty" hidden class="mt-12 rounded-xl border-2 border-dashed border-zinc-500 px-6 py-14 text-center font-mono text-sm font-bold text-zinc-500">一致するActivityはありません。</p>
     </main>
     <SiteFooter />
   </div>
 </Layout>
+
+<script>
+  function bindActivitySearch() {
+    const activityInput = document.querySelector<HTMLInputElement>("#activity-search");
+    if (!activityInput || activityInput.dataset.bound === "true") return;
+    activityInput.dataset.bound = "true";
+    activityInput.addEventListener("input", () => {
+      const activityItems = Array.from(document.querySelectorAll<HTMLElement>("[data-activity-item]"));
+      const activityYears = Array.from(document.querySelectorAll<HTMLElement>("[data-activity-year]"));
+      const activityCount = document.querySelector<HTMLElement>("#activity-count");
+      const activityEmpty = document.querySelector<HTMLElement>("#activity-empty");
+      const terms = activityInput.value.trim().toLocaleLowerCase("ja").split(/\s+/).filter(Boolean);
+      let visible = 0;
+      for (const item of activityItems) {
+        const matches = terms.every((term) => (item.dataset.search ?? "").includes(term));
+        item.hidden = !matches;
+        if (matches) visible += 1;
+      }
+      for (const year of activityYears) {
+        year.hidden = !year.querySelector("[data-activity-item]:not([hidden])");
+      }
+      if (activityCount) activityCount.textContent = `${visible} / ${activityItems.length} EVENTS`;
+      if (activityEmpty) activityEmpty.hidden = visible !== 0;
+    });
+  }
+
+  bindActivitySearch();
+  document.addEventListener("astro:page-load", bindActivitySearch);
+</script>
 
 <style>
   .activity-graph::before {
