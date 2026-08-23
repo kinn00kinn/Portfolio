@@ -1,0 +1,43 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  tags: string[];
+  publishedAt: Date;
+  featured?: boolean;
+  github: string;
+  demo?: string;
+  zenn?: string;
+}
+
+const { title, description, image, imageAlt, tags, publishedAt, featured = false, github, demo, zenn } = Astro.props;
+const searchText = [title, description, ...tags].join(" ").toLocaleLowerCase("ja");
+const primaryUrl = demo ?? github;
+---
+
+<article
+  data-project-card
+  data-search={searchText}
+  class="group flex h-full flex-col overflow-hidden rounded-xl border-2 border-zinc-900 bg-white shadow-[5px_5px_0_#18181b] transition-transform duration-200 hover:-translate-y-1 dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[5px_5px_0_#27272a]"
+>
+  <a href={primaryUrl} target="_blank" rel="noreferrer" class="block overflow-hidden border-b-2 border-zinc-900 dark:border-zinc-700">
+    <img src={image} alt={imageAlt} loading="lazy" width="1200" height="630" class="aspect-[16/9] w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]" />
+  </a>
+  <div class="flex flex-1 flex-col p-5">
+    <div class="mb-4 flex items-center justify-between gap-3 font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+      <time datetime={publishedAt.toISOString()}>{publishedAt.toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit" })}</time>
+      {featured && <span class="rounded-full bg-emerald-200 px-2.5 py-1 text-emerald-950 dark:bg-emerald-400">Pinned</span>}
+    </div>
+    <h2 class="text-xl font-black tracking-tight text-zinc-950 dark:text-white">
+      <a href={primaryUrl} target="_blank" rel="noreferrer" class="outline-none hover:text-emerald-700 focus-visible:underline dark:hover:text-emerald-300">{title}<span class="ml-2 text-sm" aria-hidden="true">↗</span></a>
+    </h2>
+    <p class="mt-2 flex-1 text-sm font-medium leading-relaxed text-zinc-600 dark:text-zinc-300">{description}</p>
+    <div class="mt-5 flex flex-wrap gap-2 border-t border-dashed border-zinc-300 pt-4 dark:border-zinc-700">
+      <a href={github} target="_blank" rel="noreferrer" class="inline-flex items-center rounded-md bg-zinc-900 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-wider text-white hover:bg-emerald-700 dark:bg-white dark:text-zinc-950 dark:hover:bg-emerald-300">GitHub ↗</a>
+      {demo && <a href={demo} target="_blank" rel="noreferrer" class="inline-flex items-center rounded-md border-2 border-zinc-900 px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-900">Open ↗</a>}
+      {zenn && <a href={zenn} target="_blank" rel="noreferrer" class="inline-flex items-center rounded-md border-2 border-sky-400 px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider text-sky-700 hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-sky-950/40">Zenn ↗</a>}
+    </div>
+  </div>
+</article>

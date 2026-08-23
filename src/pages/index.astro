@@ -1,13 +1,30 @@
 ---
 // src/pages/index.astro
 import Layout from "../layouts/Layout.astro";
-import { getGithubData } from "../lib/github";
 import { getZennArticles } from "../lib/zenn";
 import PortfolioList from "../components/PortfolioList";
-import { profile } from "../config"; // 前回の修正でconfig.tsを作成している前提
+import SiteHeader from "../components/SiteHeader.astro";
+import { profile } from "../config";
+import { projects } from "../data/projects";
 
-// データを取得
-const { repos } = await getGithubData();
+// Projectsは外部APIではなく、src/data/projects.ts を正本にする。
+const repos = projects
+  .filter((project) => project.featured)
+  .sort((a, b) => a.order - b.order)
+  .map((project) => ({
+    name: project.title,
+    description: project.description,
+    url: project.github,
+    homepageUrl: project.demo ?? null,
+    stargazerCount: project.stars,
+    primaryLanguage: project.language
+      ? {
+          name: project.language,
+          color: project.languageColor ?? "#71717a",
+        }
+      : null,
+    zenn: project.zenn,
+  }));
 const articles = await getZennArticles();
 ---
 
@@ -16,6 +33,7 @@ const articles = await getZennArticles();
   description={profile.bio}
   image="/og-image.png"
 >
+  <SiteHeader />
   <main>
     <PortfolioList
       profile={profile}

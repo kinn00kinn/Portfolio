@@ -49,6 +49,13 @@ const jsonLd = {
 <!doctype html>
 <html lang="ja" class="scroll-smooth">
   <head>
+    <script is:inline>
+      try {
+        const savedTheme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", savedTheme === "dark" || (!savedTheme && prefersDark));
+      } catch {}
+    </script>
     <script
       type="text/partytown"
       async

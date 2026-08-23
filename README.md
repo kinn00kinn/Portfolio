@@ -1,43 +1,41 @@
-# Astro Starter Kit: Minimal
+# kinn-kinn.com
 
-```sh
-npm create astro@latest -- --template minimal
+kinn00kinnの成果物、記事、外部での採用・言及を集約するAstro製ポートフォリオです。
+
+## コンテンツの更新
+
+成果物は外部APIから自動生成せず、`src/data/projects.ts` の配列を手作業で更新します。画像にはGitHub Rawなどの外部URLを指定できます。
+
+```ts
+{
+  id: "example",
+  title: "Project name",
+  description: "一覧に表示する短い説明",
+  publishedAt: new Date("2026-08-23T00:00:00+09:00"),
+  featured: false,
+  order: 10,
+  image: "https://raw.githubusercontent.com/.../example.png",
+  imageAlt: "画像の説明",
+  tags: ["Astro", "TypeScript"],
+  github: "https://github.com/kinn00kinn/example",
+  demo: "https://example.com",
+  zenn: "https://zenn.dev/kinnkinn/articles/example",
+  language: "TypeScript",
+  languageColor: "#3178c6",
+  stars: 0,
+}
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+- `featured: true` の成果物はトップページのPinned Projects候補になります。
+- `demo` と `zenn` は該当リンクがある場合だけ記述します。
 
-## 🚀 Project Structure
+Activityは `src/data/activities.ts` の配列だけを、新しい順に手作業で更新します。種類は `Release / Article / Mention / Adoption / Research` の5つです。
 
-Inside of your Astro project, you'll see the following folders and files:
+## Commands
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command | Action |
+| :-- | :-- |
+| `npm install` | 依存関係をインストール |
+| `npm run dev` | 開発サーバーを起動 |
+| `npm run build` | `dist/`へ本番ビルド |
+| `npm run preview` | 本番ビルドをローカルで確認 |

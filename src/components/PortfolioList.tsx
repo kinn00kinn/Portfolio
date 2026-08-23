@@ -6,8 +6,6 @@ import {
   FolderCode,
   ExternalLink,
   Mail,
-  Sun,
-  Moon,
   Twitter,
   Linkedin,
   BookOpen,
@@ -16,7 +14,6 @@ import {
   Star,
   Rss,
 } from "lucide-react";
-import TechButton from "./TechButton";
 
 interface Repository {
   name: string;
@@ -28,6 +25,7 @@ interface Repository {
     name: string;
     color: string;
   } | null;
+  zenn?: string;
 }
 
 interface Article {
@@ -121,62 +119,14 @@ const formatDisplayUrl = (url: string) =>
 
 const formatEmailDisplay = (email: string) => email.replace(/@/g, "[at]");
 
-const ThemeToggleButton = ({
-  isDark,
-  onClick,
-  compact = false,
-}: {
-  isDark: boolean;
-  onClick: () => void;
-  compact?: boolean;
-}) => (
-  <button
-    onClick={onClick}
-    aria-label="Toggle Dark Mode"
-    className={`group z-50 flex items-center gap-3 text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-white ${
-      compact
-        ? "fixed left-4 top-4 h-11 w-11 justify-center rounded-full border-2 border-zinc-900 bg-white shadow-[3px_3px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a] lg:hidden"
-        : ""
-    }`}
-  >
-    <span
-      className={`flex items-center justify-center transition-colors ${
-        compact
-          ? ""
-          : "rounded-lg border border-zinc-200 bg-white p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
-      }`}
-    >
-      {isDark ? <Sun size={20} /> : <Moon size={20} />}
-    </span>
-    {!compact && (
-      <span className="font-mono text-xs font-bold uppercase tracking-widest opacity-0 transition-opacity group-hover:opacity-100">
-        {isDark ? "Light" : "Dark"}
-      </span>
-    )}
-  </button>
-);
-
 const PortfolioList: React.FC<PortfolioListProps> = ({
   profile,
   repos,
   articles,
 }) => {
-  const [isDark, setIsDark] = useState(false);
   const [activeSection, setActiveSection] = useState("profile");
 
   useEffect(() => {
-    if (
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-    }
-
     const handleScroll = () => {
       const sections = ["profile", "projects", "logs"];
       for (const section of sections) {
@@ -194,18 +144,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove("dark");
-      localStorage.theme = "light";
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.theme = "dark";
-      setIsDark(true);
-    }
-  };
 
   const visibleXUrl =
     profile.xUrl && profile.xUrl !== "https://twitter.com/"
@@ -303,8 +241,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
       <div
         className="relative min-h-screen overflow-hidden bg-[#f4f2ee] font-sans text-zinc-900 transition-colors duration-300 selection:bg-emerald-300/40 dark:bg-[#070707] dark:text-zinc-100"
       >
-        <ThemeToggleButton isDark={isDark} onClick={toggleTheme} compact />
-
         <div className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col gap-5 z-50">
           {[
             { id: "profile", icon: User, label: "PROFILE" },
@@ -342,8 +278,6 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             </a>
           ))}
 
-          <div className="my-1 h-px w-9 bg-zinc-300 dark:bg-zinc-800" />
-          <ThemeToggleButton isDark={isDark} onClick={toggleTheme} />
         </div>
 
         <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-6 p-4 md:p-8 lg:pl-24">
@@ -424,79 +358,59 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               <span className={`${monoText} font-bold`}>:: SECTION_02</span>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {repos.slice(0, 3).map((repo, i) => (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {repos.slice(0, 4).map((repo, i) => (
                 <article
                   key={repo.url}
-                  className={`${glassCardClass} h-full p-6 hover:border-zinc-400 dark:hover:border-zinc-600`}
+                  className="group relative flex aspect-video flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white/85 p-4 shadow-sm transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950/80 dark:hover:border-zinc-600 md:p-5"
                 >
-                  <div className="mb-4 flex items-start justify-between">
-                    <span className={monoText}>
-                      // PROJ_{String(i + 1).padStart(2, "0")}
-                    </span>
-                    <div className="flex items-center gap-1 rounded border border-zinc-200 bg-zinc-100 px-2 py-1 font-mono text-xs font-bold dark:border-zinc-700 dark:bg-zinc-900">
-                      <Star
-                        size={12}
-                        className="fill-yellow-400 text-yellow-400"
-                      />
-                      <span className="text-zinc-700 dark:text-zinc-200">
+                  <div className="flex items-center justify-between gap-2 font-mono text-[10px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 md:text-[11px]">
+                    <span>// PROJ_{String(i + 1).padStart(2, "0")}</span>
+                    <span className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
+                        <Star size={12} className="fill-yellow-400 text-yellow-400" />
                         {repo.stargazerCount}
-                      </span>
-                    </div>
+                    </span>
                   </div>
 
-                  <div className="flex-grow">
-                    <h3 className="mb-2 line-clamp-1 text-xl font-bold text-zinc-900 transition-colors hover:text-blue-600 dark:text-white dark:hover:text-blue-400">
-                      {repo.name}
-                    </h3>
-                    <p className="mb-6 line-clamp-3 text-sm font-medium leading-relaxed text-zinc-600 dark:text-zinc-300">
-                      {repo.description || "No description provided."}
-                    </p>
-                  </div>
+                  <h3 className="mt-3 line-clamp-1 text-lg font-black leading-tight text-zinc-900 transition-colors group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-300 md:text-xl">
+                    <a href={repo.homepageUrl || repo.url} target="_blank" rel="noreferrer">{repo.name}<span className="ml-1 text-xs">↗</span></a>
+                  </h3>
+                  <p className="mt-1.5 line-clamp-2 text-xs font-medium leading-[1.5] text-zinc-600 dark:text-zinc-300 md:text-[13px]">
+                    {repo.description || "No description provided."}
+                  </p>
 
-                  <div className="mb-4 flex items-center justify-between border-t border-dashed border-zinc-200 pt-4 dark:border-zinc-700">
-                    {repo.primaryLanguage ? (
-                      <div className="flex items-center gap-2 font-mono text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                        <span
-                          className="h-3 w-3 rounded-full shadow-[0_0_5px_currentColor]"
-                          style={{
-                            backgroundColor: repo.primaryLanguage.color,
-                            color: repo.primaryLanguage.color,
-                          }}
-                        />
+                  <div className="mt-auto flex min-h-4 items-center font-mono text-[10px] font-bold text-zinc-500 dark:text-zinc-400">
+                    {repo.primaryLanguage && (
+                      <span className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: repo.primaryLanguage.color }} />
                         {repo.primaryLanguage.name.toUpperCase()}
-                      </div>
-                    ) : (
-                      <span />
+                      </span>
                     )}
                   </div>
 
-                  <div className="mt-auto grid grid-cols-2 gap-3">
-                    <TechButton
-                      href={repo.url}
-                      icon={Github}
-                      variant="secondary"
-                    >
-                      CODE
-                    </TechButton>
+                  <div className="mt-3 flex gap-2 border-t border-dashed border-zinc-200 pt-3 dark:border-zinc-700">
+                      <a href={repo.url} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded border border-zinc-300 px-2 py-1.5 font-mono text-[10px] font-black uppercase hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900">
+                        <Github size={12} /> Code
+                      </a>
 
-                    {repo.homepageUrl ? (
-                      <TechButton
-                        href={repo.homepageUrl}
-                        icon={Globe}
-                        variant="primary"
-                      >
-                        DEMO
-                      </TechButton>
-                    ) : (
-                      <div className="flex items-center justify-center gap-2 rounded-md border border-zinc-200 bg-white/50 px-3 py-2 font-mono text-xs font-bold text-zinc-400 dark:border-zinc-800 dark:bg-black/20 dark:text-zinc-600">
-                        <Globe size={14} />
-                        DEMO
-                      </div>
-                    )}
+                      {repo.homepageUrl && (
+                        <a href={repo.homepageUrl} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded border border-zinc-300 px-2 py-1.5 font-mono text-[10px] font-black uppercase hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900">
+                          <Globe size={12} /> Demo
+                        </a>
+                      )}
+                      {repo.zenn && (
+                        <a href={repo.zenn} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded border border-sky-300 px-2 py-1.5 font-mono text-[10px] font-black uppercase text-sky-700 hover:bg-sky-50 dark:border-sky-800 dark:text-sky-300 dark:hover:bg-sky-950/40">
+                          <BookOpen size={12} /> Zenn
+                        </a>
+                      )}
                   </div>
                 </article>
               ))}
+            </div>
+            <div className="mt-7 flex justify-end">
+              <a href="/project/" className="rounded-md border-2 border-zinc-900 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0_#18181b] transition-transform hover:-translate-y-0.5 dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a]">
+                All projects →
+              </a>
             </div>
           </section>
 
