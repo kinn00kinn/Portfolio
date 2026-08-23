@@ -17,8 +17,8 @@ export interface Activity {
   project?: string;
 }
 
-// Activityは新しい順に、このファイルだけを手作業で更新する。
-export const activities: Activity[] = [
+// Activityの記述順に関係なく、公開時は日付の新しい順へ並べる。
+const activityData: Activity[] = [
   {
     date: "2026-08-22",
     type: "Article",
@@ -144,3 +144,9 @@ export const activities: Activity[] = [
     project: "lut-estimator",
   },
 ];
+
+export const activities = [...activityData].sort(
+  (a, b) =>
+    new Date(`${b.date}T00:00:00+09:00`).getTime() -
+    new Date(`${a.date}T00:00:00+09:00`).getTime(),
+);

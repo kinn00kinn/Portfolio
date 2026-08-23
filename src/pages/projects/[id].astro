@@ -1,0 +1,171 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { activities } from "../../data/activities";
+import { getProjectPath, projects, type Project } from "../../data/projects";
+
+export const getStaticPaths = (() =>
+  projects.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }))) satisfies GetStaticPaths;
+
+interface Props { project: Project }
+
+const { project } = Astro.props;
+const site = Astro.site ?? new URL("https://kinn-kinn.com");
+const projectUrl = new URL(getProjectPath(project), site);
+const imageUrl = new URL(project.image, site);
+const relatedActivities = activities.filter((activity) => activity.project === project.id);
+const otherProjects = [...projects]
+  .filter((candidate) => candidate.id !== project.id)
+  .sort((a, b) => a.order - b.order)
+  .slice(0, 3);
+
+const typeStyle = {
+  Release: "bg-emerald-400 text-emerald-950",
+  Article: "bg-sky-400 text-sky-950",
+  Mention: "bg-amber-300 text-amber-950",
+  Adoption: "bg-violet-400 text-violet-950",
+  Research: "bg-rose-400 text-rose-950",
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": project.schemaType,
+  name: project.title,
+  description: project.description,
+  url: projectUrl.href,
+  image: imageUrl.href,
+  codeRepository: project.github,
+  programmingLanguage: project.language,
+  keywords: project.tags.join(", "),
+  datePublished: project.publishedAt.toISOString(),
+  sameAs: [project.demo, project.zenn].filter(Boolean),
+  author: {
+    "@type": "Person",
+    name: "kinn00kinn",
+    url: new URL("/", site).href,
+  },
+};
+---
+
+<Layout
+  title={`${project.title} — Projects — kinn00kinn`}
+  description={project.description}
+  image={project.image}
+  imageAlt={project.imageAlt}
+  imageWidth={1200}
+  imageHeight={675}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <div class="min-h-screen bg-[#f4f2ee] text-zinc-900 transition-colors dark:bg-[#070707] dark:text-zinc-100">
+    <SiteHeader />
+    <main class="mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-16">
+      <nav aria-label="パンくずリスト" class="mb-8 font-mono text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+        <a href="/projects/" class="hover:text-emerald-700 dark:hover:text-emerald-300">Projects</a>
+        <span class="mx-2" aria-hidden="true">/</span>
+        <span aria-current="page">{project.title}</span>
+      </nav>
+
+      <article>
+        <header class="grid gap-8 border-b-2 border-zinc-900 pb-10 dark:border-zinc-700 lg:grid-cols-[1fr_24rem] lg:items-end">
+          <div>
+            <p class="mb-4 font-mono text-xs font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">// Project {String(project.order).padStart(2, "0")}</p>
+            <h1 class="max-w-4xl text-5xl font-black leading-[0.92] tracking-[-0.055em] text-zinc-950 dark:text-white md:text-7xl">{project.title}</h1>
+            <p class="mt-6 max-w-3xl text-lg font-medium leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-xl">{project.description}</p>
+          </div>
+          <div class="flex flex-wrap gap-2 lg:justify-end">
+            {project.tags.map((tag) => <span class="rounded-full border border-zinc-400 bg-white px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider dark:border-zinc-700 dark:bg-zinc-950">{tag}</span>)}
+          </div>
+        </header>
+
+        <div class="my-10 overflow-hidden rounded-xl border-2 border-zinc-900 bg-white shadow-[7px_7px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[7px_7px_0_#27272a]">
+          <img src={project.image} alt={project.imageAlt} width="1200" height="675" class="aspect-video w-full object-cover" />
+        </div>
+
+        <section aria-label="Project links" class="mb-14 flex flex-wrap gap-3">
+          {project.demo && <a href={project.demo} target="_blank" rel="noreferrer" class="rounded-md border-2 border-zinc-900 bg-emerald-300 px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-zinc-950 shadow-[3px_3px_0_#18181b] hover:-translate-y-0.5 dark:border-emerald-400 dark:shadow-[3px_3px_0_#064e3b]">{project.demoLabel ?? "Open"} ↗</a>}
+          <a href={project.github} target="_blank" rel="noreferrer" class="rounded-md border-2 border-zinc-900 bg-zinc-900 px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-white hover:-translate-y-0.5 dark:border-zinc-600 dark:bg-white dark:text-zinc-950">GitHub ↗</a>
+          {project.zenn && <a href={project.zenn} target="_blank" rel="noreferrer" class="rounded-md border-2 border-sky-500 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider text-sky-700 hover:-translate-y-0.5 dark:bg-zinc-950 dark:text-sky-300">Zenn ↗</a>}
+        </section>
+
+        <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div class="space-y-14">
+            <section>
+              <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">01 / Overview</p>
+              <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-white">このプロジェクトについて</h2>
+              <div class="mt-6 space-y-5 text-base font-medium leading-8 text-zinc-700 dark:text-zinc-300">
+                {project.overview.map((paragraph) => <p>{paragraph}</p>)}
+              </div>
+            </section>
+
+            <section>
+              <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">02 / Highlights</p>
+              <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-white">特徴</h2>
+              <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+                {project.highlights.map((highlight, index) => (
+                  <li class="rounded-lg border-2 border-zinc-900 bg-white p-5 shadow-[3px_3px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a]">
+                    <span class="mb-3 block font-mono text-[10px] font-black text-emerald-700 dark:text-emerald-300">H_{String(index + 1).padStart(2, "0")}</span>
+                    <span class="font-bold leading-relaxed">{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {project.impact && project.impact.length > 0 && (
+              <section>
+                <p class="mb-3 font-mono text-xs font-black uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">03 / Impact</p>
+                <h2 class="text-3xl font-black tracking-tight text-zinc-950 dark:text-white">外部での広がり</h2>
+                <ul class="mt-6 space-y-3">
+                  {project.impact.map((item) => <li class="border-l-4 border-emerald-400 pl-5 font-medium leading-7 text-zinc-700 dark:text-zinc-300">{item}</li>)}
+                </ul>
+              </section>
+            )}
+          </div>
+
+          <aside>
+            <div class="sticky top-24 rounded-xl border-2 border-zinc-900 bg-white p-5 shadow-[5px_5px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[5px_5px_0_#27272a]">
+              <div class="flex items-center justify-between border-b border-dashed border-zinc-300 pb-4 dark:border-zinc-700">
+                <h2 class="text-xl font-black">Related activity</h2>
+                <span class="font-mono text-xs font-black text-zinc-400">{relatedActivities.length}</span>
+              </div>
+              {relatedActivities.length > 0 ? (
+                <ol class="mt-2 divide-y divide-dashed divide-zinc-300 dark:divide-zinc-700">
+                  {relatedActivities.map((activity) => (
+                    <li class="py-4">
+                      <div class="flex items-center justify-between gap-3">
+                        <time datetime={activity.date} class="font-mono text-[10px] font-bold text-zinc-500">{activity.date.replaceAll("-", ".")}</time>
+                        <span class:list={["rounded px-2 py-1 font-mono text-[9px] font-black uppercase", typeStyle[activity.type]]}>{activity.type}</span>
+                      </div>
+                      <p class="mt-2 text-sm font-black leading-snug">{activity.title}</p>
+                      {activity.url && <a href={activity.url} target="_blank" rel="noreferrer" class="mt-2 inline-block font-mono text-[10px] font-black uppercase text-emerald-700 hover:underline dark:text-emerald-300">Source ↗</a>}
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p class="mt-4 text-sm font-medium text-zinc-500">関連する活動は準備中です。</p>
+              )}
+              <a href="/activity/" class="mt-5 block border-t border-dashed border-zinc-300 pt-4 font-mono text-xs font-black uppercase text-emerald-700 hover:underline dark:border-zinc-700 dark:text-emerald-300">All activity →</a>
+            </div>
+          </aside>
+        </div>
+      </article>
+
+      <section class="mt-20 border-t-2 border-zinc-900 pt-10 dark:border-zinc-700">
+        <div class="mb-7 flex items-end justify-between gap-4">
+          <h2 class="text-3xl font-black tracking-tight">More projects</h2>
+          <a href="/projects/" class="font-mono text-xs font-black uppercase text-emerald-700 hover:underline dark:text-emerald-300">View registry →</a>
+        </div>
+        <div class="grid gap-7 md:grid-cols-3">
+          {otherProjects.map((candidate) => <ProjectCard {...candidate} />)}
+        </div>
+      </section>
+    </main>
+    <SiteFooter />
+  </div>
+</Layout>
