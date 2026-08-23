@@ -34,16 +34,27 @@ const links = [
         );
       })}
     </nav>
-    <button
-      id="theme-toggle"
-      type="button"
-      aria-label="カラーテーマを切り替える"
-      title="カラーテーマを切り替える"
-      class="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-zinc-900 bg-white text-zinc-900 transition-transform hover:-translate-y-0.5 dark:border-zinc-600 dark:bg-[#1c1a17] dark:text-zinc-200"
-    >
-      <svg class="h-4 w-4 dark:hidden" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 1 0 9 9 9 9 0 0 1-9-9Z" /></svg>
-      <svg class="hidden h-4 w-4 dark:block" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></svg>
-    </button>
+    <div class="flex shrink-0 items-center gap-1.5">
+      <button
+        id="language-toggle"
+        type="button"
+        aria-label="Switch to English"
+        title="Switch to English"
+        class="grid h-9 min-w-9 place-items-center rounded-full border-2 border-zinc-900 bg-white px-2 font-mono text-[10px] font-black text-zinc-900 transition-transform hover:-translate-y-0.5 dark:border-zinc-600 dark:bg-[#1c1a17] dark:text-zinc-200"
+      >
+        EN
+      </button>
+      <button
+        id="theme-toggle"
+        type="button"
+        aria-label="カラーテーマを切り替える"
+        title="カラーテーマを切り替える"
+        class="grid h-9 w-9 place-items-center rounded-full border-2 border-zinc-900 bg-white text-zinc-900 transition-transform hover:-translate-y-0.5 dark:border-zinc-600 dark:bg-[#1c1a17] dark:text-zinc-200"
+      >
+        <svg class="h-4 w-4 dark:hidden" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 1 0 9 9 9 9 0 0 1-9-9Z" /></svg>
+        <svg class="hidden h-4 w-4 dark:block" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -62,6 +73,38 @@ const links = [
     });
   }
 
+  function bindLanguageToggle() {
+    const languageButton = document.querySelector<HTMLButtonElement>("#language-toggle");
+    if (!languageButton) return;
+
+    const updateButton = () => {
+      const japanese = document.documentElement.lang === "ja";
+      languageButton.textContent = japanese ? "EN" : "JA";
+      languageButton.setAttribute("aria-label", japanese ? "Switch to English" : "日本語に切り替える");
+      languageButton.title = japanese ? "Switch to English" : "日本語に切り替える";
+      languageButton.setAttribute("aria-pressed", String(!japanese));
+    };
+
+    updateButton();
+    if (languageButton.dataset.bound === "true") return;
+    languageButton.dataset.bound = "true";
+    languageButton.addEventListener("click", () => {
+      const language = document.documentElement.lang === "ja" ? "en" : "ja";
+      localStorage.setItem("language", language);
+      const languageWindow = window as Window & {
+        __setPortfolioLanguage?: (language: "ja" | "en") => void;
+      };
+      if (languageWindow.__setPortfolioLanguage) {
+        languageWindow.__setPortfolioLanguage(language);
+        updateButton();
+      } else {
+        window.location.reload();
+      }
+    });
+  }
+
   bindThemeToggle();
+  bindLanguageToggle();
   document.addEventListener("astro:page-load", bindThemeToggle);
+  document.addEventListener("astro:page-load", bindLanguageToggle);
 </script>

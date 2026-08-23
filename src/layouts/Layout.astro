@@ -2,6 +2,7 @@
 // src/layouts/Layout.astro
 import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
+import { englishTranslations } from "../i18n";
 
 interface Props {
   title: string;
@@ -49,6 +50,15 @@ const imageType = image.endsWith(".webp") ? "image/webp" : "image/png";
 <!doctype html>
 <html lang="ja" class="scroll-smooth">
   <head>
+    <script is:inline>
+      (() => {
+        let language;
+        try { language = localStorage.getItem("language"); } catch {}
+        document.documentElement.lang = language === "ja" || language === "en"
+          ? language
+          : (navigator.language || "").toLowerCase().startsWith("ja") ? "ja" : "en";
+      })();
+    </script>
     <script is:inline data-astro-rerun>
       (() => {
         const getDarkTheme = () => {
@@ -150,5 +160,103 @@ const imageType = image.endsWith(".webp") ? "image/webp" : "image/png";
     class="bg-white text-slate-900 transition-colors duration-300 dark:bg-[#12110f] dark:text-zinc-200"
   >
     <slot />
+    <script is:inline define:vars={{ englishTranslations }}>
+      (() => {
+        const isEnglish = () => document.documentElement.lang === "en";
+        const japaneseTranslations = Object.fromEntries(
+          Object.entries(englishTranslations).map(([japanese, english]) => [english, japanese]),
+        );
+        const translatedAttributes = ["alt", "aria-label", "content", "placeholder", "title"];
+
+        const translateValue = (value) => {
+          const translations = isEnglish() ? englishTranslations : japaneseTranslations;
+          return translations[value] || value;
+        };
+        const translateJson = (value) => {
+          if (typeof value === "string") return translateValue(value);
+          if (Array.isArray(value)) return value.map(translateJson);
+          if (value && typeof value === "object") {
+            for (const key of Object.keys(value)) value[key] = translateJson(value[key]);
+          }
+          return value;
+        };
+        const translateText = (node) => {
+          if (!node.nodeValue || ["SCRIPT", "STYLE"].includes(node.parentElement?.tagName)) return;
+          const value = node.nodeValue;
+          const trimmed = value.trim();
+          const translated = translateValue(trimmed);
+          if (translated !== trimmed) node.nodeValue = value.replace(trimmed, translated);
+        };
+        const translateElement = (element) => {
+          for (const attribute of translatedAttributes) {
+            const value = element.getAttribute(attribute);
+            if (value) element.setAttribute(attribute, translateValue(value));
+          }
+          if (element.matches("[data-search]")) {
+            const source = element.dataset.i18nSearchSource || element.dataset.search || "";
+            element.dataset.i18nSearchSource = source;
+            element.dataset.search = isEnglish()
+              ? Object.entries(englishTranslations).reduce(
+                  (text, [ja, en]) => text.includes(ja.toLowerCase()) ? `${text} ${en.toLowerCase()}` : text,
+                  source.toLowerCase(),
+                )
+              : source;
+          }
+          if (element.matches('script[type="application/ld+json"]')) {
+            try { element.textContent = JSON.stringify(translateJson(JSON.parse(element.textContent || "{}"))); } catch {}
+          }
+        };
+        const applyLanguage = (root = document) => {
+          if (root.nodeType === Node.TEXT_NODE) {
+            if (!root.parentElement?.closest("astro-island[ssr]")) translateText(root);
+            return;
+          }
+          const element = root.nodeType === Node.DOCUMENT_NODE ? root.documentElement : root;
+          if (element?.nodeType === Node.ELEMENT_NODE) {
+            if (!element.closest?.("astro-island[ssr]")) translateElement(element);
+            element.querySelectorAll("*").forEach((child) => {
+              if (!child.closest("astro-island[ssr]")) translateElement(child);
+            });
+            const walker = element.ownerDocument.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+              acceptNode: (node) => node.parentElement?.closest("astro-island[ssr]")
+                ? NodeFilter.FILTER_REJECT
+                : NodeFilter.FILTER_ACCEPT,
+            });
+            while (walker.nextNode()) translateText(walker.currentNode);
+            element.querySelectorAll("astro-island[ssr]").forEach((island) => {
+              if (island.dataset.i18nBound === "true") return;
+              island.dataset.i18nBound = "true";
+              island.addEventListener("astro:hydrate", () => applyLanguage(island), { once: true });
+            });
+          }
+          const targetDocument = element?.ownerDocument || document;
+          const ogLocale = targetDocument.querySelector('meta[property="og:locale"]');
+          if (ogLocale) ogLocale.setAttribute("content", isEnglish() ? "en_US" : "ja_JP");
+        };
+        const start = () => {
+          applyLanguage(document);
+          if (!window.__portfolioLanguageObserver) {
+            window.__portfolioLanguageObserver = new MutationObserver((mutations) => {
+              for (const mutation of mutations) mutation.addedNodes.forEach((node) => applyLanguage(node));
+            });
+          }
+          window.__portfolioLanguageObserver.disconnect();
+          window.__portfolioLanguageObserver.observe(document.body, { childList: true, subtree: true });
+        };
+
+        window.__setPortfolioLanguage = (language) => {
+          document.documentElement.lang = language;
+          applyLanguage(document);
+        };
+
+        document.addEventListener("astro:before-swap", (event) => {
+          event.newDocument.documentElement.lang = isEnglish() ? "en" : "ja";
+          applyLanguage(event.newDocument);
+        });
+        document.addEventListener("astro:page-load", () => requestAnimationFrame(start));
+        if (document.readyState === "complete") requestAnimationFrame(start);
+        else window.addEventListener("load", () => requestAnimationFrame(start), { once: true });
+      })();
+    </script>
   </body>
 </html>
