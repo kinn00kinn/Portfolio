@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "images:projects": "node scripts/build-project-images.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
