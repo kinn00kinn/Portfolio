@@ -19,7 +19,9 @@ const {
   title,
   description = "kinn00kinnのソフトウェア、研究、執筆、活動を集約するホームドメイン。",
   image = "/og-image.png",
-  imageAlt = title,
+  imageAlt = image === "/og-image.png"
+    ? "パンダのアイコンが入ったkinn-kinn.comのカラフルなポートフォリオカード"
+    : title,
   imageWidth = 1200,
   imageHeight = image.endsWith(".webp") ? 675 : 630,
   ogType = "website",

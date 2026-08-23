@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="2" fill="#18181b" opacity="0.09" />
+    </pattern>
+    <clipPath id="card-clip">
+      <rect x="64" y="58" width="1040" height="500" rx="38" />
+    </clipPath>
+  </defs>
+
+  <rect width="1200" height="630" fill="#f4f2ee" />
+  <rect width="1200" height="630" fill="url(#dots)" opacity="0.45" />
+
+  <!-- Background accents -->
+  <path d="M48 89l13-27 14 27 29 4-21 21 5 29-27-14-26 14 5-29-21-21Z" fill="#fbbf24" stroke="#18181b" stroke-width="5" />
+  <circle cx="1130" cy="92" r="26" fill="#fb7185" stroke="#18181b" stroke-width="5" />
+  <path d="M1112 525l47 23-42 30" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Main card -->
+  <rect x="84" y="78" width="1040" height="500" rx="38" fill="#18181b" />
+  <rect x="64" y="58" width="1040" height="500" rx="38" fill="#6ee7b7" stroke="#18181b" stroke-width="7" />
+  <g clip-path="url(#card-clip)">
+    <rect x="64" y="58" width="1040" height="500" fill="url(#dots)" />
+    <path d="M64 487h330l-74 71H64Z" fill="#fbbf24" />
+    <path d="M810 58h176l-70 62H740Z" fill="#38bdf8" opacity="0.9" />
+    <circle cx="1016" cy="522" r="78" fill="#fb7185" opacity="0.94" />
+  </g>
+
+  <!-- Panda panel -->
+  <rect x="117" y="119" width="306" height="362" rx="30" fill="#18181b" />
+  <rect x="102" y="104" width="306" height="362" rx="30" fill="#ffffff" stroke="#18181b" stroke-width="7" />
+  <rect x="156" y="429" width="198" height="52" rx="26" fill="#18181b" />
+  <circle cx="182" cy="455" r="8" fill="#34d399" />
+  <text x="203" y="463" fill="#ffffff" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="20" font-weight="800" letter-spacing="2">PANDA MODE</text>
+
+  <path d="M456 111v389" stroke="#18181b" stroke-width="6" stroke-linecap="round" opacity="0.22" />
+
+  <!-- Status and title -->
+  <rect x="500" y="108" width="260" height="54" rx="27" fill="#18181b" />
+  <circle cx="531" cy="135" r="9" fill="#34d399" />
+  <text x="558" y="143" fill="#ffffff" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="19" font-weight="800" letter-spacing="2.2">ONLINE / OPEN</text>
+
+  <text x="496" y="260" fill="#18181b" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="61" font-weight="900" letter-spacing="-3">kinn-kinn.com</text>
+  <rect x="957" y="213" width="8" height="57" rx="3" fill="#18181b" />
+  <text x="500" y="307" fill="#18181b" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="21" font-weight="800" letter-spacing="2">SOFTWARE / RESEARCH / WRITING</text>
+
+  <!-- Quiz prompt -->
+  <rect x="500" y="337" width="278" height="47" rx="23" fill="#fbbf24" stroke="#18181b" stroke-width="4" />
+  <text x="521" y="368" fill="#18181b" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="18" font-weight="900" letter-spacing="1">Q. WHAT'S INSIDE?</text>
+
+  <!-- CTA -->
+  <rect x="511" y="414" width="502" height="100" rx="24" fill="#18181b" />
+  <rect x="498" y="401" width="502" height="100" rx="24" fill="#ffffff" stroke="#18181b" stroke-width="6" />
+  <rect x="512" y="415" width="72" height="72" rx="18" fill="#fbbf24" stroke="#18181b" stroke-width="5" />
+  <text x="548" y="461" text-anchor="middle" fill="#18181b" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="30" font-weight="900">A</text>
+  <text x="742" y="461" text-anchor="middle" fill="#18181b" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="25" font-weight="900" letter-spacing="0.7">EXPLORE MY WORK</text>
+
+  <!-- Click cue -->
+  <circle cx="940" cy="451" r="48" fill="none" stroke="#fbbf24" stroke-width="7" stroke-dasharray="12 13" />
+
+  <g transform="translate(272 341) scale(1.4)">
+    <path d="M476 122c-8-5-12-13-12-22V84c0-3 2-5 5-5 2 0 4 1 5 3V62c0-3 2-5 5-5s5 2 5 5v19-8c0-3 2-5 5-5s5 2 5 5v10-6c0-3 2-5 5-5s5 2 5 5v8-3c0-3 2-5 5-5s5 2 5 5v16c0 12-7 22-18 26l-5 2c-4 1-7 0-10-4Z" fill="#fde68a" stroke="#18181b" stroke-width="3" stroke-linejoin="round" />
+    <path d="M474 83v16M484 81v16M494 83v14M504 85v12" fill="none" stroke="#18181b" stroke-width="2.5" stroke-linecap="round" opacity="0.35" />
+    <path d="M474 120c10 3 21 2 30-4l5 10c-13 7-27 8-40 3Z" fill="#38bdf8" stroke="#18181b" stroke-width="3" stroke-linejoin="round" />
+  </g>
+
+  <!-- Click sticker and confetti -->
+  <g transform="rotate(7 990 98)">
+    <rect x="933" y="72" width="114" height="55" rx="15" fill="#fb7185" stroke="#18181b" stroke-width="5" />
+    <text x="990" y="108" text-anchor="middle" fill="#18181b" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="22" font-weight="900">CLICK!</text>
+  </g>
+  <path d="M823 132l18-20m11 29h27m-44 18 18 20" fill="none" stroke="#18181b" stroke-width="7" stroke-linecap="round" />
+  <circle cx="813" cy="366" r="13" fill="#fb7185" stroke="#18181b" stroke-width="5" />
+  <path d="M851 343l15 26 27-15" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
