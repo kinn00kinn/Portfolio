@@ -6,6 +6,7 @@ export interface Article {
   title: string;
   link: string;
   pubDate: string;
+  source: "Zenn" | "Blog";
   likedCount?: number; // RSSでは取得できないためオプショナルに変更
 }
 
@@ -27,6 +28,7 @@ export async function getZennArticles(limit?: number): Promise<Article[]> {
       pubDate: item.pubDate 
         ? format(new Date(item.pubDate), "yyyy-MM-dd") 
         : "",
+      source: "Zenn",
       // likedCountはRSSに含まれないため設定しない
     };
   });

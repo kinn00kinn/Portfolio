@@ -190,19 +190,13 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
   const writingLinks = useMemo(
     () =>
       [
-        {
-          href: "/writing/",
-          icon: BookOpen,
-          label: "Writing index",
-          value: "kinn-kinn.com/writing",
-          featured: true,
-        },
         profile.blogUrl
           ? {
               href: profile.blogUrl,
               icon: Rss,
               label: "Blog",
               value: formatDisplayUrl(profile.blogUrl),
+              featured: true,
             }
           : undefined,
         profile.zennUrl
@@ -235,7 +229,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
 
   const glassCardClass =
     "relative flex flex-col " +
-    "bg-white/85 dark:bg-zinc-950/80 backdrop-blur-md " +
+    "bg-white/85 dark:bg-[#1c1a17]/90 backdrop-blur-md " +
     "border border-zinc-200 dark:border-zinc-800 " +
     "rounded-lg overflow-hidden shadow-sm " +
     "transition-colors duration-200";
@@ -246,7 +240,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
   return (
     <>
       <div
-        className="relative min-h-screen overflow-hidden bg-[#f4f2ee] font-sans text-zinc-900 transition-colors duration-300 selection:bg-emerald-300/40 dark:bg-[#070707] dark:text-zinc-100"
+        className="relative min-h-screen overflow-hidden bg-[#f4f2ee] font-sans text-zinc-900 transition-colors duration-300 selection:bg-emerald-300/40 dark:bg-[#12110f] dark:text-zinc-200"
       >
         <div className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col gap-5 z-50">
           {[
@@ -260,14 +254,14 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               aria-label={`Scroll to ${item.label}`}
               className={`group flex items-center gap-3 transition-colors duration-200 ${
                 activeSection === item.id
-                  ? "text-zinc-900 dark:text-white"
+                  ? "text-zinc-900 dark:text-zinc-100"
                   : "text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400"
               }`}
             >
               <div
                 className={`p-2 rounded-lg transition-colors duration-200 ${
                   activeSection === item.id
-                    ? "bg-white dark:bg-zinc-800 shadow-sm"
+                    ? "bg-white dark:bg-[#26231f] shadow-sm"
                     : "bg-transparent"
                 }`}
               >
@@ -292,8 +286,8 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
             id="profile"
             className="relative py-4 md:py-6"
           >
-            <article className="grid overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white shadow-[8px_8px_0_#18181b] dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[8px_8px_0_#27272a] lg:grid-cols-2">
-              <div className="flex min-h-[360px] flex-col justify-between gap-10 bg-[#fffdf7] p-6 dark:bg-zinc-950 md:min-h-[390px] md:p-8 lg:p-10">
+            <article className="grid overflow-hidden rounded-[18px] border-2 border-zinc-900 bg-white shadow-[8px_8px_0_#18181b] dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[8px_8px_0_#090807] lg:grid-cols-2">
+              <div className="flex min-h-[360px] flex-col justify-between gap-10 bg-[#fffdf7] p-6 dark:bg-[#1c1a17] md:min-h-[390px] md:p-8 lg:p-10">
                 <div>
                   <div className="mb-10">
                     <p className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
@@ -301,7 +295,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     </p>
                   </div>
 
-                  <h1 className="max-w-[12ch] text-5xl font-black leading-[0.95] text-zinc-950 dark:text-white md:text-7xl">
+                  <h1 className="max-w-[12ch] text-5xl font-black leading-[0.95] text-zinc-950 dark:text-zinc-100 md:text-7xl">
                     {profile.name}
                   </h1>
 
@@ -355,10 +349,10 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           <section id="projects" className="mb-8">
             <div className="mb-6 flex items-end justify-between border-b border-zinc-300 pb-4 dark:border-zinc-700">
               <div className="flex items-center gap-3">
-                <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-white dark:text-black">
+                <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-zinc-200 dark:text-zinc-900">
                   <FolderCode size={20} />
                 </div>
-                <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-white">
+                <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
                   Pinned Projects
                 </h2>
               </div>
@@ -369,7 +363,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               {repos.slice(0, 4).map((repo, i) => (
                 <article
                   key={repo.url}
-                  className="group relative flex aspect-video flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white/85 p-4 shadow-sm transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950/80 dark:hover:border-zinc-600 md:p-5"
+                  className="group relative flex aspect-video flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white/85 p-4 shadow-sm transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:bg-[#1c1a17]/90 dark:hover:border-zinc-500 md:p-5"
                 >
                   <div className="flex items-center justify-between gap-2 font-mono text-[10px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 md:text-[11px]">
                     <span>// PROJ_{String(i + 1).padStart(2, "0")}</span>
@@ -379,7 +373,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                     </span>
                   </div>
 
-                  <h3 className="mt-3 line-clamp-1 text-lg font-black leading-tight text-zinc-900 transition-colors group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-300 md:text-xl">
+                  <h3 className="mt-3 line-clamp-1 text-lg font-black leading-tight text-zinc-900 transition-colors group-hover:text-emerald-700 dark:text-zinc-100 dark:group-hover:text-emerald-300 md:text-xl">
                     <a href={repo.projectUrl}>{repo.name}<span className="ml-1 text-xs">→</span></a>
                   </h3>
                   <p className="mt-1.5 line-clamp-2 text-xs font-medium leading-[1.5] text-zinc-600 dark:text-zinc-300 md:text-[13px]">
@@ -396,12 +390,12 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   </div>
 
                   <div className="mt-3 flex gap-2 border-t border-dashed border-zinc-200 pt-3 dark:border-zinc-700">
-                      <a href={repo.url} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded border border-zinc-300 px-2 py-1.5 font-mono text-[10px] font-black uppercase hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900">
+                      <a href={repo.url} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded border border-zinc-300 px-2 py-1.5 font-mono text-[10px] font-black uppercase hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-[#26231f]">
                         <Github size={12} /> Code
                       </a>
 
                       {repo.homepageUrl && (
-                        <a href={repo.homepageUrl} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded border border-zinc-300 px-2 py-1.5 font-mono text-[10px] font-black uppercase hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900">
+                        <a href={repo.homepageUrl} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded border border-zinc-300 px-2 py-1.5 font-mono text-[10px] font-black uppercase hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-[#26231f]">
                           <Globe size={12} /> Demo
                         </a>
                       )}
@@ -415,7 +409,7 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
               ))}
             </div>
             <div className="mt-7 flex justify-end">
-              <a href="/projects/" className="rounded-md border-2 border-zinc-900 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0_#18181b] transition-transform hover:-translate-y-0.5 dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-[3px_3px_0_#27272a]">
+              <a href="/projects/" className="rounded-md border-2 border-zinc-900 bg-white px-5 py-3 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0_#18181b] transition-transform hover:-translate-y-0.5 dark:border-zinc-700 dark:bg-[#1c1a17] dark:shadow-[3px_3px_0_#090807]">
                 All projects →
               </a>
             </div>
@@ -424,10 +418,10 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
           <section id="logs">
             <div className="mb-8 flex items-end justify-between border-b border-zinc-300 pb-4 dark:border-zinc-700">
               <div className="flex items-center gap-3">
-                <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-white dark:text-black">
+                <div className="rounded bg-zinc-900 p-2 text-white shadow-sm dark:bg-zinc-200 dark:text-zinc-900">
                   <BookOpen size={20} />
                 </div>
-                <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-white">
+                <h2 className="text-2xl font-black uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
                   Latest Blog
                 </h2>
               </div>
@@ -443,18 +437,18 @@ const PortfolioList: React.FC<PortfolioListProps> = ({
                   rel="noopener noreferrer"
                   className={`${glassCardClass} block p-5 hover:border-blue-500/50 dark:hover:border-blue-400/50`}
                 >
-                  <div className="absolute -left-[10px] mt-1 h-4 w-4 rounded-full border-4 border-zinc-300 bg-zinc-100 transition-colors dark:border-zinc-700 dark:bg-zinc-950" />
+                  <div className="absolute -left-[10px] mt-1 h-4 w-4 rounded-full border-4 border-zinc-300 bg-zinc-100 transition-colors dark:border-zinc-700 dark:bg-[#1c1a17]" />
                   <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
                       <div
                         className={`mb-2 flex items-center gap-3 opacity-70 ${monoText}`}
                       >
-                        <span className="rounded bg-zinc-100 px-2 py-0.5 text-[10px] dark:bg-zinc-900">
+                        <span className="rounded bg-zinc-100 px-2 py-0.5 text-[10px] dark:bg-[#26231f]">
                           LOG_{String(i + 1).padStart(3, "0")}
                         </span>
                         <span>{article.pubDate.replace(/-/g, ".")}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-zinc-900 transition-colors hover:text-blue-600 dark:text-white dark:hover:text-blue-400 md:text-xl">
+                      <h3 className="text-lg font-bold text-zinc-900 transition-colors hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-400 md:text-xl">
                         {article.title}
                       </h3>
                     </div>
