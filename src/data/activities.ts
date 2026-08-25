@@ -20,6 +20,15 @@ export interface Activity {
 // Activityの記述順に関係なく、公開時は日付の新しい順へ並べる。
 const activityData: Activity[] = [
   {
+    date: "2026-08-25",
+    type: "Article",
+    title:
+      "【suを差し上げます】Huawei MatePad 11 (DBY-W09) Bootloader Unlock + APatch Root 実機手順",
+    description:
+      "Huawei MatePad 11（DBY-W09）でBootloader UnlockとAPatchによるRoot化を行う実機手順をまとめました。",
+    url: "https://blog.kinn-kinn.com/blog/su-wo-kudasai-matepad11-root",
+  },
+  {
     date: "2026-08-22",
     type: "Article",
     title: "Five Card Loveの仕組みを解説",

@@ -121,6 +121,8 @@ export const englishTranslations: Record<string, string> = {
   "タイトル・説明・種類・Project・年で検索…": "Search by title, description, type, project, or year…",
   "年別リンク": "Links by year",
   "一致するActivityはありません。": "No matching activity found.",
+  "【suを差し上げます】Huawei MatePad 11 (DBY-W09) Bootloader Unlock + APatch Root 実機手順": "【Here's Your su】Huawei MatePad 11 (DBY-W09) Bootloader Unlock + APatch Root Hands-on Guide",
+  "Huawei MatePad 11（DBY-W09）でBootloader UnlockとAPatchによるRoot化を行う実機手順をまとめました。": "Documented the hands-on process for unlocking the bootloader and rooting a Huawei MatePad 11 (DBY-W09) with APatch.",
   "Five Card Loveの仕組みを解説": "Explained how Five Card Love works",
   "5枚のカードだけで両思いかを判定するFive-Card Trickを、Webで再現した設計と実装をまとめました。": "I documented the design and implementation of a web-based Five-Card Trick that checks for mutual interest using only five cards.",
   "Five Card Loveを公開": "Released Five Card Love",
